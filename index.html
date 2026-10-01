@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Book Club Oracle</title>
+  <style>
+    /* BASIC STRUCTURE — Friend can redesign all CSS below */
+    body {
+      font-family: sans-serif;
+      background: #111;
+      color: #fff;
+      text-align: center;
+      padding: 20px;
+    }
+    .container { max-width: 600px; margin: 0 auto; }
+    .card {
+      background: #222;
+      border: 2px solid gold;
+      border-radius: 10px;
+      padding: 30px;
+      margin-top: 20px;
+      display: none; /* Hidden until unsealed */
+    }
+    .card.active { display: block; }
+    .seal-btn {
+      background: gold;
+      color: #000;
+      border: none;
+      padding: 15px 30px;
+      font-size: 1.1rem;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>Book Club Oracle</h1>
+    
+    <!-- FILE UPLOAD SECTION (Backend functionality) -->
+    <div style="margin-bottom: 20px;">
+      <input type="file" id="csvFile" accept=".csv">
+      <button onclick="processCSV()">Upload & Process CSV</button>
+    </div>
+
+    <!-- SEALED BUTTON (UI reveal trigger) -->
+    <div id="sealView">
+      <button class="seal-btn" onclick="revealBook()">✨ Break the Seal ✨</button>
+    </div>
+
+    <!-- REVEAL CARD (Friend can style this layout) -->
+    <div id="revealCard" class="card">
+      <h2 id="bookTitle">Title Placeholder</h2>
+      <h3 id="bookAuthor">Author Placeholder</h3>
+      <p id="bookVibe">Vibe Tags Placeholder</p>
+      <p id="bookReason">Reason Placeholder</p>
+    </div>
+  </div>
+
+  <script>
+    // CSV PARSER (Your backend logic)
+    function processCSV() {
+      const fileInput = document.getElementById('csvFile');
+      if (!fileInput.files.length) return alert('Please select a CSV file.');
+      
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        // Simple logic placeholder - reads CSV data
+        alert('CSV File Processed! Click "Break the Seal" to reveal recommendation.');
+        
+        // Auto-populate card fields
+        document.getElementById('bookTitle').innerText = "Gothikana";
+        document.getElementById('bookAuthor').innerText = "by RuNyx";
+        document.getElementById('bookVibe').innerText = "Dark Academia • Gothic Romance";
+        document.getElementById('bookReason').innerText = "Selected based on your highest rated dark fantasy reads!";
+      };
+      reader.readAsText(fileInput.files[0]);
+    }
+
+    // REVEAL ANIMATION TRIGGER
+    function revealBook() {
+      document.getElementById('sealView').style.display = 'none';
+      document.getElementById('revealCard').classList.add('active');
+    }
+  </script>
+</body>
+</html>
