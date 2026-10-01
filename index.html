@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>The Book Oracle — Celestial Reading Matcher</title>
   
-  <!-- Typography & Libraries -->
+  <!-- Typography & External Libraries -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
@@ -59,7 +59,13 @@
       margin-bottom: 15px;
     }
 
-    .host-badge-btn {
+    .nav-actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .sound-toggle-btn, .host-badge-btn {
       background: rgba(59, 28, 90, 0.6);
       border: 1px solid var(--gold-dark);
       color: var(--gold-light);
@@ -74,7 +80,7 @@
       gap: 6px;
     }
 
-    .host-badge-btn:hover {
+    .sound-toggle-btn:hover, .host-badge-btn:hover {
       background: var(--purple-accent);
       border-color: var(--gold-light);
       box-shadow: 0 0 12px rgba(212, 175, 55, 0.4);
@@ -103,7 +109,7 @@
       margin-bottom: 22px;
     }
 
-    /* Step Progress */
+    /* Progress Bar */
     .progress-bar {
       display: flex;
       justify-content: space-between;
@@ -455,10 +461,6 @@
       transform: translateY(-1px);
     }
 
-    .store-flag {
-      font-size: 0.9rem;
-    }
-
     /* Mystery Sealed Card */
     .mystery-card {
       background: linear-gradient(135deg, rgba(30, 20, 50, 0.95), rgba(10, 8, 20, 0.98));
@@ -505,7 +507,7 @@
       border: 1px solid var(--gold-primary);
       border-radius: 16px;
       width: 100%;
-      max-width: 650px;
+      max-width: 680px;
       max-height: 85vh;
       overflow-y: auto;
       padding: 24px;
@@ -530,31 +532,42 @@
     }
 
     .host-record-item {
-      background: rgba(10, 8, 20, 0.7);
+      background: rgba(10, 8, 20, 0.75);
       border: 1px solid rgba(212, 175, 55, 0.25);
       border-radius: 10px;
-      padding: 14px;
-      margin-bottom: 12px;
+      padding: 16px;
+      margin-bottom: 14px;
     }
 
     .host-record-title {
       font-family: 'Cinzel Decorative', cursive;
       color: var(--gold-light);
-      font-size: 1.05rem;
+      font-size: 1.1rem;
       margin-bottom: 4px;
     }
 
     .host-record-meta {
       font-size: 0.85rem;
       color: var(--text-muted);
-      margin-bottom: 6px;
+      margin-bottom: 8px;
+    }
+
+    .host-synopsis-box {
+      font-size: 0.9rem;
+      color: var(--text-main);
+      background: rgba(20, 15, 35, 0.6);
+      border-left: 2px solid var(--gold-primary);
+      padding: 8px 12px;
+      border-radius: 4px;
+      margin-top: 8px;
+      line-height: 1.45;
     }
 
     /* Book Reveal Display */
     .book-container {
       display: grid;
       grid-template-columns: 180px 1fr;
-      gap: 20px;
+      gap: 22px;
       text-align: left;
       margin-top: 15px;
       margin-bottom: 15px;
@@ -628,29 +641,49 @@
       font-family: 'Cinzel', serif;
     }
 
-    .pill-spice {
-      border-color: rgba(255, 82, 82, 0.5);
-      color: #ff9e9e;
-      background: rgba(60, 10, 20, 0.7);
+    .pill-format {
+      border-color: rgba(186, 104, 200, 0.6);
+      color: #e1bee7;
+      background: rgba(45, 15, 60, 0.7);
+    }
+
+    /* Celestial Synopsis Box */
+    .synopsis-card {
+      background: rgba(10, 8, 20, 0.75);
+      border: 1px solid rgba(212, 175, 55, 0.3);
+      border-radius: 10px;
+      padding: 12px 16px;
+      margin-bottom: 12px;
+    }
+
+    .synopsis-title {
+      font-family: 'Cinzel', serif;
+      font-size: 0.82rem;
+      color: var(--gold-light);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
 
     .book-description {
-      font-size: 1rem;
+      font-size: 0.98rem;
       line-height: 1.55;
       color: var(--text-main);
-      max-height: 130px;
+      max-height: 150px;
       overflow-y: auto;
       padding-right: 6px;
-      margin-bottom: 12px;
       scrollbar-width: thin;
       scrollbar-color: var(--gold-dark) transparent;
     }
 
     .reason-box {
       border-top: 1px solid rgba(212, 175, 55, 0.25);
-      padding-top: 12px;
-      font-size: 1rem;
-      line-height: 1.5;
+      padding-top: 10px;
+      font-size: 0.95rem;
+      line-height: 1.45;
       color: var(--gold-light);
       font-style: italic;
     }
@@ -684,13 +717,18 @@
 </head>
 <body>
 
-  <!-- Top Navigation / Host Registry Badge -->
   <div class="header-bar">
     <div style="font-family: 'Cinzel'; font-size: 0.85rem; color: var(--gold-light);">✨ Book Club Oracle</div>
-    <button class="host-badge-btn" onclick="promptHostAccess()">
-      <span>👑 Host Master Registry</span>
-      <span id="hostCountBadge" style="background: var(--gold-primary); color: #000; padding: 1px 6px; border-radius: 10px; font-weight: bold; font-size: 0.75rem;">0</span>
-    </button>
+    <div class="nav-actions">
+      <button class="sound-toggle-btn" id="soundToggleBtn" onclick="toggleAudioMute()">
+        <span id="soundIcon">🔊</span>
+        <span id="soundLabel">Sound On</span>
+      </button>
+      <button class="host-badge-btn" onclick="promptHostAccess()">
+        <span>👑 Host Master Registry</span>
+        <span id="hostCountBadge" style="background: var(--gold-primary); color: #000; padding: 1px 6px; border-radius: 10px; font-weight: bold; font-size: 0.75rem;">0</span>
+      </button>
+    </div>
   </div>
 
   <div class="container">
@@ -705,6 +743,7 @@
       <div class="step-node" id="node4">4</div>
     </div>
 
+    <!-- STEP 1: Library Upload -->
     <div class="box active" id="step1">
       <div class="section-title">Step 1: Consult Your Book Club Library</div>
       <div class="section-desc">Upload your Goodreads or StoryGraph CSV export to match directly from your TBR list, or skip to explore outside picks.</div>
@@ -723,11 +762,12 @@
       </div>
     </div>
 
+    <!-- STEP 2: Comprehensive Quiz Form -->
     <div class="box" id="step2">
       <div class="section-title">Step 2: Book Club Alignment Quiz</div>
-      <div class="section-desc">Select multiple moods, vibes, spice levels, and length filters to tailor your celestial match.</div>
+      <div class="section-desc">Select multiple moods, vibes, format preferences, spice levels, and length filters to tailor your celestial match.</div>
 
-      <!-- Mood / Energy (Multi-Select) -->
+      <!-- 1. Mood / Energy -->
       <div class="form-group">
         <label class="form-label">
           <span>1. Current Reading Mood & Energy</span>
@@ -773,10 +813,36 @@
         </div>
       </div>
 
-      <!-- Recommendation Source -->
+      <!-- 2. Preferred Book Format (NEW) -->
       <div class="form-group">
         <label class="form-label">
-          <span>2. Recommendation Source</span>
+          <span>2. Preferred Reading Format</span>
+          <span class="label-hint">(Single choice)</span>
+        </label>
+        <div class="options-grid" id="formatGrid" style="grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));">
+          <div class="option-card selected" onclick="selectSingle('formatGrid', this, 'any')">
+            <span class="option-icon">🌟</span>
+            <span class="option-title">Any / No Preference</span>
+          </div>
+          <div class="option-card" onclick="selectSingle('formatGrid', this, 'kindle')">
+            <span class="option-icon">📱</span>
+            <span class="option-title">Kindle / E-Book</span>
+          </div>
+          <div class="option-card" onclick="selectSingle('formatGrid', this, 'paperback')">
+            <span class="option-icon">📖</span>
+            <span class="option-title">Paperback</span>
+          </div>
+          <div class="option-card" onclick="selectSingle('formatGrid', this, 'hardcover')">
+            <span class="option-icon">📚</span>
+            <span class="option-title">Hardcover</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. Recommendation Source -->
+      <div class="form-group">
+        <label class="form-label">
+          <span>3. Recommendation Source</span>
           <span class="label-hint">(Single choice)</span>
         </label>
         <div class="options-grid" id="sourceGrid" style="grid-template-columns: repeat(2, 1fr);">
@@ -791,10 +857,10 @@
         </div>
       </div>
 
-      <!-- Vibes & Atmosphere -->
+      <!-- 4. Vibes & Atmosphere -->
       <div class="form-group">
         <label class="form-label">
-          <span>3. Vibes & Atmosphere</span>
+          <span>4. Vibes & Atmosphere</span>
           <span class="label-hint">(Select one or more)</span>
         </label>
         <div class="options-grid" id="vibeGrid">
@@ -837,9 +903,9 @@
         </div>
       </div>
 
-      <!-- Page Count / Length -->
+      <!-- 5. Page Count / Length -->
       <div class="form-group">
-        <label class="form-label">4. Desired Book Length</label>
+        <label class="form-label">5. Desired Book Length</label>
         <div class="options-grid" id="lengthGrid" style="grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));">
           <div class="option-card" onclick="selectSingle('lengthGrid', this, 'short')">
             <span class="option-icon">📄</span>
@@ -860,16 +926,16 @@
         </div>
       </div>
 
-      <!-- Spice Level -->
+      <!-- 6. Spice Level -->
       <div class="form-group">
-        <label class="form-label">5. Spice Level / Heat Rating</label>
+        <label class="form-label">6. Spice Level / Heat Rating</label>
         <div class="options-grid" id="spiceGrid" style="grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));">
           <div class="option-card" onclick="selectSingle('spiceGrid', this, 'none')">
             <span class="option-icon">🌶️</span>
             <span class="option-title">Sweet / No Spice</span>
           </div>
           <div class="option-card" onclick="selectSingle('spiceGrid', this, 'mild')">
-            <span class="option-icon">🌶️🌶️</span>
+            <span class="option-icon">🌶️️🌶️</span>
             <span class="option-title">Warm / Mild</span>
           </div>
           <div class="option-card selected" onclick="selectSingle('spiceGrid', this, 'spicy')">
@@ -887,9 +953,9 @@
         </div>
       </div>
 
-      <!-- Tropes -->
+      <!-- 7. Tropes -->
       <div class="form-group">
-        <label class="form-label">6. Romance & Fantasy Tropes Desired</label>
+        <label class="form-label">7. Romance & Fantasy Tropes Desired</label>
         <div class="trope-grid" id="tropeChips">
           <span class="trope-chip" onclick="toggleTrope(this)">Enemies to Lovers</span>
           <span class="trope-chip" onclick="toggleTrope(this)">Fake Dating</span>
@@ -907,17 +973,17 @@
       </div>
 
       <div class="form-group">
-        <label class="form-label">7. Member Name / Reader Alias (Optional)</label>
+        <label class="form-label">8. Member Name / Reader Alias (Optional)</label>
         <input type="text" id="memberNameInput" placeholder="e.g. 'Maeve' or 'Bookworm22' (Helps host match secrets)">
       </div>
 
       <div class="form-group">
-        <label class="form-label">8. Favorite Author or Book Inspiration (Optional)</label>
+        <label class="form-label">9. Favorite Author or Book Inspiration (Optional)</label>
         <input type="text" id="recentFiveStar" placeholder="e.g. 'Rebecca Yarros', 'Ali Hazelwood', 'Fourth Wing'">
       </div>
 
       <div class="form-group">
-        <label class="form-label">9. Things to Avoid / DNF (Optional)</label>
+        <label class="form-label">10. Things to Avoid / DNF (Optional)</label>
         <input type="text" id="avoidInput" placeholder="e.g. 'Love triangles', 'Slow pacing', or specific book/author">
       </div>
 
@@ -927,6 +993,7 @@
       </div>
     </div>
 
+    <!-- STEP 3: Reveal Choice -->
     <div class="box seal-box" id="step3">
       <div class="section-title">The Oracle Decision</div>
       <div style="font-family: 'Cinzel'; color: var(--gold-light); font-size: 0.9rem; margin-bottom: 12px;">
@@ -939,7 +1006,7 @@
           <div>
             <div class="choice-icon">🔮</div>
             <div class="choice-title">Reveal My Match Now</div>
-            <div class="choice-desc">Instantly unseal the recommendation with cover art, full details, and direct Irish bookstore links.</div>
+            <div class="choice-desc">Instantly unseal the recommendation with cover art, full blurb overview, and direct bookstore links.</div>
           </div>
           <button class="btn" style="width: 100%;">Reveal Now ✨</button>
         </div>
@@ -976,11 +1043,17 @@
           <div class="book-author" id="cardAuthor">by Author</div>
 
           <div class="insight-pills" id="cardPills">
-            <!-- Dynamic Pills -->
+            <!-- Dynamic Pills including Format -->
           </div>
 
-          <div class="book-description" id="cardDescription">
-            Fetching book details...
+          <!-- Celestial Synopsis Box -->
+          <div class="synopsis-card">
+            <div class="synopsis-title">
+              <span>📖 Celestial Synopsis & Overview:</span>
+            </div>
+            <div class="book-description" id="cardDescription">
+              Fetching book details and synopsis...
+            </div>
           </div>
 
           <div class="reason-box" id="cardReason">
@@ -989,13 +1062,13 @@
         </div>
       </div>
 
-      <!-- Irish Bookstores Section -->
+      <!-- Irish Bookstores & Format-Tailored Links Section -->
       <div class="bookstore-section">
         <div class="bookstore-title">
-          <span>🇮🇪 Purchase / Pre-Order from Local & Irish Bookshops:</span>
+          <span>🇮🇪 Purchase Options & Local Irish Bookshops:</span>
         </div>
         <div class="store-grid" id="storeLinksGrid">
-          <!-- Dynamic Links generated here -->
+          <!-- Dynamic Links generated here based on format preference -->
         </div>
       </div>
 
@@ -1030,7 +1103,6 @@
     </div>
   </div>
 
-  <!-- Host Master Registry Modal -->
   <div class="modal-overlay" id="hostModal">
     <div class="modal-content">
       <div class="modal-header">
@@ -1041,7 +1113,7 @@
       </div>
 
       <div style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 15px;">
-        Below are all member secret matches submitted for purchase, wrapping, and book club reveals.
+        Below are all secret member matches submitted for purchase, wrapping, and book club reveals.
       </div>
 
       <div id="hostRecordsList">
@@ -1056,7 +1128,136 @@
   </div>
 
   <script>
-    // Host Master PIN configuration
+    // Web Audio Synthesizer for Rich Soundscapes without mp3 dependencies
+    class AudioSynthesizer {
+      constructor() {
+        this.ctx = null;
+        this.muted = false;
+      }
+
+      init() {
+        if (!this.ctx) {
+          const AudioCtx = window.AudioContext || window.webkitAudioContext;
+          if (AudioCtx) this.ctx = new AudioCtx();
+        }
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+
+      playClick() {
+        if (this.muted) return;
+        this.init();
+        if (!this.ctx) return;
+
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(880, now); // A5
+        osc.frequency.exponentialRampToValueAtTime(1320, now + 0.08);
+
+        gain.gain.setValueAtTime(0.12, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.08);
+      }
+
+      playSweep() {
+        if (this.muted) return;
+        this.init();
+        if (!this.ctx) return;
+
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(300, now);
+        osc.frequency.exponentialRampToValueAtTime(900, now + 0.25);
+
+        gain.gain.setValueAtTime(0.15, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.25);
+      }
+
+      playSecretLock() {
+        if (this.muted) return;
+        this.init();
+        if (!this.ctx) return;
+
+        const now = this.ctx.currentTime;
+        [220, 330, 440].forEach((freq, i) => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(freq, now + (i * 0.06));
+
+          gain.gain.setValueAtTime(0.12, now + (i * 0.06));
+          gain.gain.exponentialRampToValueAtTime(0.001, now + (i * 0.06) + 0.15);
+
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+
+          osc.start(now + (i * 0.06));
+          osc.stop(now + (i * 0.06) + 0.15);
+        });
+      }
+
+      playRevealFanfare() {
+        if (this.muted) return;
+        this.init();
+        if (!this.ctx) return;
+
+        const now = this.ctx.currentTime;
+        const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6 chord flourish
+
+        notes.forEach((freq, idx) => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(freq, now + (idx * 0.08));
+
+          gain.gain.setValueAtTime(0.18, now + (idx * 0.08));
+          gain.gain.exponentialRampToValueAtTime(0.001, now + (idx * 0.08) + 0.6);
+
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+
+          osc.start(now + (idx * 0.08));
+          osc.stop(now + (idx * 0.08) + 0.6);
+        });
+      }
+    }
+
+    const soundEngine = new AudioSynthesizer();
+
+    function toggleAudioMute() {
+      soundEngine.muted = !soundEngine.muted;
+      const icon = document.getElementById('soundIcon');
+      const label = document.getElementById('soundLabel');
+      if (soundEngine.muted) {
+        icon.innerText = '🔇';
+        label.innerText = 'Muted';
+      } else {
+        icon.innerText = '🔊';
+        label.innerText = 'Sound On';
+        soundEngine.playClick();
+      }
+    }
+
     const HOST_PIN = "oracle2026";
     const state = {
       currentStep: 1,
@@ -1065,6 +1266,7 @@
       quiz: {
         memberName: '',
         moods: ['cozy'],
+        format: 'any',
         source: 'tbr',
         vibes: ['christmas'],
         length: 'medium',
@@ -1074,8 +1276,7 @@
         avoid: ''
       },
       isLoading: false,
-      recommendation: null,
-      cachedOpenLibPool: []
+      recommendation: null
     };
 
     const subjectMappings = {
@@ -1107,7 +1308,7 @@
         first_publish_year: 2023,
         pages: 528,
         spice: "🌶️🌶️🌶️ Spicy (3-4/5)",
-        description: "Twenty-year-old Violet Sorrengail enters the lethal Rider Quadrant at Basgiath War College where dragons don't suffer fragile humans.",
+        description: "Twenty-year-old Violet Sorrengail enters the lethal Rider Quadrant at Basgiath War College where dragons don't suffer fragile humans. Survival depends on forging bond with dragons and defying dangerous cadets.",
         key: "/works/OL31718712W"
       },
       {
@@ -1117,7 +1318,7 @@
         first_publish_year: 2023,
         pages: 368,
         spice: "🌶️ Warm / Mild (1-2/5)",
-        description: "Two rival journalists find unexpected love through magical typewriters tied to a war among ancient gods.",
+        description: "Two rival young journalists find unexpected love and solace through mystical typewriters linked directly across a war torn land between ancient resurrected gods.",
         key: "/works/OL30725227W"
       },
       {
@@ -1127,7 +1328,7 @@
         first_publish_year: 2022,
         pages: 480,
         spice: "🌶️🌶️🌶️ Spicy (3-4/5)",
-        description: "An adopted human daughter of the Vampire King enters the Kejari, a deadly tournament held by the Goddess of Death.",
+        description: "An adopted human daughter of the Vampire King enters the Kejari—a deadly tournament held by the Goddess of Death—where she must forge a alliance with her lethal enemy.",
         key: "/works/OL28920192W"
       },
       {
@@ -1137,7 +1338,7 @@
         first_publish_year: 2024,
         pages: 416,
         spice: "🔥 Super Smutty (5/5)",
-        description: "A dangerous alliance between a Vampyre bride and an Alpha werewolf leads to unexpected heat.",
+        description: "A dangerous political alliance between a Vampyre bride and an Alpha werewolf leads to explosive heat, treacherous secrets, and an unexpected romance.",
         key: "/works/OL35588320W"
       },
       {
@@ -1147,7 +1348,7 @@
         first_publish_year: 2022,
         pages: 304,
         spice: "🌶️ Sweet / No Spice (0/5)",
-        description: "A cozy fantasy about a tired female orc barbarian who hangs up her sword to open the first coffee shop in a fantasy city.",
+        description: "A cozy fantasy about a tired female orc barbarian who hangs up her sword to open the very first coffee shop in a fantasy city, discovering warm friendships along the way.",
         key: "/works/OL28258382W"
       }
     ];
@@ -1158,12 +1359,11 @@
     }
 
     function showStep(stepNum) {
+      soundEngine.playSweep();
       state.currentStep = stepNum;
       document.querySelectorAll('.box').forEach(box => box.classList.remove('active'));
       
-      if (stepNum === 4) {
-        // Controlled via unsealCard mode
-      } else {
+      if (stepNum !== 4) {
         document.getElementById('step' + stepNum).classList.add('active');
       }
 
@@ -1187,6 +1387,7 @@
     }
 
     function skipCSV() {
+      soundEngine.playClick();
       state.hasCSV = false;
       document.getElementById('fileNameDisplay').innerText = "Skipped CSV Upload";
       state.quiz.source = 'outside_tbr';
@@ -1194,6 +1395,7 @@
     }
 
     function toggleMultiSelect(gridId, cardElem, val) {
+      soundEngine.playClick();
       cardElem.classList.toggle('selected');
       let targetArray = gridId === 'moodGrid' ? state.quiz.moods : state.quiz.vibes;
       
@@ -1211,16 +1413,19 @@
     }
 
     function selectSingle(gridId, cardElem, val) {
+      soundEngine.playClick();
       const container = document.getElementById(gridId);
       container.querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
       cardElem.classList.add('selected');
 
+      if (gridId === 'formatGrid') state.quiz.format = val;
       if (gridId === 'sourceGrid') state.quiz.source = val;
       if (gridId === 'lengthGrid') state.quiz.length = val;
       if (gridId === 'spiceGrid') state.quiz.spice = val;
     }
 
     function toggleTrope(chipElem) {
+      soundEngine.playClick();
       chipElem.classList.toggle('selected');
       const trope = chipElem.innerText;
       if (state.quiz.tropes.includes(trope)) {
@@ -1233,6 +1438,7 @@
     function handleFileSelect() {
       const fileInput = document.getElementById('csvInput');
       if (fileInput.files.length > 0) {
+        soundEngine.playClick();
         const file = fileInput.files[0];
         document.getElementById('fileNameDisplay').innerText = "Loaded: " + file.name;
         
@@ -1319,6 +1525,27 @@
       state.hasCSV = true;
     }
 
+    async function fetchBookWorkDetails(workKey) {
+      if (!workKey) return null;
+      try {
+        const url = `https://openlibrary.org${workKey}.json`;
+        const res = await fetch(url);
+        if (res.ok) {
+          const data = await res.json();
+          let description = "A modern Romance & Fantasy selection aligned with your reading quiz preferences.";
+          if (typeof data.description === 'string') {
+            description = data.description;
+          } else if (data.description && data.description.value) {
+            description = data.description.value;
+          }
+          return description.substring(0, 500) + (description.length > 500 ? '...' : '');
+        }
+      } catch (e) {
+        console.warn("Could not fetch work description details:", e);
+      }
+      return null;
+    }
+
     async function fetchFromOpenLibrary(querySubjects, searchKeywords = '', avoidTerms = '') {
       try {
         let docs = [];
@@ -1359,6 +1586,7 @@
     }
 
     function processOracleDecision() {
+      soundEngine.playClick();
       state.quiz.memberName = document.getElementById('memberNameInput').value.trim() || 'Book Club Member';
       state.quiz.fiveStar = document.getElementById('recentFiveStar').value.trim();
       state.quiz.avoid = document.getElementById('avoidInput').value.trim();
@@ -1381,6 +1609,7 @@
           const searchResults = await fetchFromOpenLibrary([tbrItem.title], tbrItem.author, state.quiz.avoid);
           if (searchResults.length > 0) {
             const best = searchResults[0];
+            const fetchedBlurb = await fetchBookWorkDetails(best.key);
             pickedBook = {
               title: best.title || tbrItem.title,
               author: best.author_name ? best.author_name[0] : tbrItem.author,
@@ -1389,7 +1618,7 @@
               pages: best.number_of_pages_median || 350,
               ratings_average: best.ratings_average ? best.ratings_average.toFixed(1) : null,
               key: best.key,
-              subjects: best.subject ? best.subject.slice(0, 3) : ['Romance', 'Fantasy']
+              description: fetchedBlurb || "Selected directly from your personal reading list for your next book club meet."
             };
           } else {
             pickedBook = {
@@ -1397,7 +1626,7 @@
               author: tbrItem.author || "Book Club Selection",
               first_publish_year: "Modern Release",
               pages: 350,
-              subjects: [state.quiz.moods[0], state.quiz.vibes[0]]
+              description: "Selected directly from your personal reading list for your next book club meet."
             };
           }
         } else {
@@ -1411,8 +1640,8 @@
           if (searchResults.length === 0) searchResults = await fetchFromOpenLibrary(['romance', 'fantasy'], '', state.quiz.avoid);
 
           if (searchResults.length > 0) {
-            state.cachedOpenLibPool = searchResults;
             const chosen = searchResults[Math.floor(Math.random() * searchResults.length)];
+            const fetchedBlurb = await fetchBookWorkDetails(chosen.key);
             pickedBook = {
               title: chosen.title,
               author: chosen.author_name ? chosen.author_name[0] : "Bestselling Author",
@@ -1421,7 +1650,7 @@
               pages: chosen.number_of_pages_median || 360,
               ratings_average: chosen.ratings_average ? chosen.ratings_average.toFixed(1) : null,
               key: chosen.key,
-              subjects: chosen.subject ? chosen.subject.slice(0, 3) : ['Romance', 'Fantasy']
+              description: fetchedBlurb || "An enchanting romance & fantasy release perfectly matched to your mood and energy preferences."
             };
           } else {
             pickedBook = curatedModernRomanceCatalog[Math.floor(Math.random() * curatedModernRomanceCatalog.length)];
@@ -1436,6 +1665,13 @@
           any: '🌶️ Tailored Spice'
         };
 
+        const formatLabelMap = {
+          any: '🌟 Any Format Preferred',
+          kindle: '📱 E-Book / Kindle Format',
+          paperback: '📖 Paperback Format',
+          hardcover: '📚 Hardcover Format'
+        };
+
         state.recommendation = {
           title: pickedBook.title,
           author: pickedBook.author.toLowerCase().startsWith('by') ? pickedBook.author : 'by ' + pickedBook.author,
@@ -1443,15 +1679,16 @@
           year: pickedBook.first_publish_year || 'Modern',
           pages: pickedBook.pages ? `${pickedBook.pages} pgs` : 'Standard',
           rating: pickedBook.ratings_average ? `⭐ ${pickedBook.ratings_average}/5` : '⭐ Book Club Pick',
-          spice: pickedBook.spice || spiceLabelMap[state.quiz.spice] || '🌶️🌶️🌶️️ Spicy',
-          vibe: `${state.quiz.moods[0].toUpperCase()} • ${state.quiz.vibes[0].toUpperCase()}`,
-          subjects: pickedBook.subjects || ['Romance', 'Fantasy'],
-          description: pickedBook.description || "A recommended modern Romance & Fantasy selection for your book club.",
+          spice: pickedBook.spice || spiceLabelMap[state.quiz.spice] || '🌶️🌶️🌶️ Spicy',
+          format: formatLabelMap[state.quiz.format] || '🌟 Any Format Preferred',
+          rawFormat: state.quiz.format,
+          description: pickedBook.description || "A captivating modern Romance & Fantasy selection for your book club.",
           reason: `Tailored match aligned with ${state.quiz.moods.join(', ')} moods and ${state.quiz.vibes.join(', ')} vibes.`,
           source: matchSource
         };
 
         if (mode === 'instant') {
+          soundEngine.playRevealFanfare();
           renderRecommendationCard();
           showStep(4);
           document.getElementById('step4_reveal').classList.add('active');
@@ -1464,7 +1701,7 @@
             colors: ['#d4af37', '#f3e5ab', '#3b1c5a', '#2e7d32']
           });
         } else {
-          // Secret Mode: Save directly to Host Registry without showing details
+          soundEngine.playSecretLock();
           saveToHostRegistry(state.recommendation, state.quiz.memberName);
           
           document.getElementById('secretSummaryText').innerText = `✨ Secret Match Transmitted! Registered for Member: ${state.quiz.memberName}`;
@@ -1487,17 +1724,71 @@
       }
     }
 
-    // Prompt for Password Protection for Host Master View
+    function renderRecommendationCard() {
+      const rec = state.recommendation;
+      document.getElementById('cardTitle').innerText = rec.title;
+      document.getElementById('cardAuthor').innerText = rec.author;
+      
+      const coverImg = document.getElementById('cardCoverImg');
+      if (rec.coverUrl) {
+        coverImg.src = rec.coverUrl;
+      } else {
+        coverImg.src = `https://placehold.co/180x270/120f20/d4af37?text=${encodeURIComponent(rec.title)}`;
+      }
+
+      const pillsContainer = document.getElementById('cardPills');
+      pillsContainer.innerHTML = `
+        <span class="pill">${rec.rating}</span>
+        <span class="pill pill-spice">${rec.spice}</span>
+        <span class="pill pill-format">${rec.format}</span>
+        <span class="pill">${rec.pages}</span>
+        <span class="pill">${rec.year}</span>
+      `;
+
+      document.getElementById('cardDescription').innerText = rec.description;
+      document.getElementById('cardReason').innerText = `✨ Oracle Insights: ${rec.reason} (${rec.source})`;
+
+      // Render Format-Tailored Purchase Links
+      const query = encodeURIComponent(`${rec.title} ${rec.author.replace('by ', '')}`);
+      const storeGrid = document.getElementById('storeLinksGrid');
+
+      let formatQuery = "";
+      if (rec.rawFormat === 'kindle') formatQuery = "+kindle";
+      if (rec.rawFormat === 'paperback') formatQuery = "+paperback";
+      if (rec.rawFormat === 'hardcover') formatQuery = "+hardcover";
+
+      storeGrid.innerHTML = `
+        <a class="store-btn" href="https://www.dubraybooks.ie/search?q=${query}" target="_blank" rel="noopener">
+          <span>🍀 Dubray Books (IE)</span>
+        </a>
+        <a class="store-btn" href="https://www.easons.com/search?q=${query}" target="_blank" rel="noopener">
+          <span>🇮🇪 Eason Books (IE)</span>
+        </a>
+        <a class="store-btn" href="https://www.hodgesfiggis.ie/search?q=${query}" target="_blank" rel="noopener">
+          <span>🏛️ Hodges Figgis (IE)</span>
+        </a>
+        <a class="store-btn" href="https://www.amazon.co.uk/s?k=${query}${formatQuery}" target="_blank" rel="noopener">
+          <span>📦 Amazon UK / IE Store</span>
+        </a>
+        ${rec.rawFormat === 'kindle' || rec.rawFormat === 'any' ? `
+          <a class="store-btn" href="https://www.amazon.co.uk/s?k=${query}+kindle+edition" target="_blank" rel="noopener">
+            <span>📱 Kindle Store</span>
+          </a>
+        ` : ''}
+      `;
+    }
+
     function promptHostAccess() {
+      soundEngine.playClick();
       const pinInput = prompt("👑 Host Password Required:\nEnter the host PIN code to access secret member submissions:");
       if (pinInput === HOST_PIN) {
+        soundEngine.playSecretLock();
         openHostModal();
       } else if (pinInput !== null) {
         alert("Incorrect Host Password. Access denied.");
       }
     }
 
-    // Host Master Registry LocalStorage Management
     function saveToHostRegistry(rec, memberName) {
       const records = JSON.parse(localStorage.getItem('oracle_host_records') || '[]');
       records.push({
@@ -1506,7 +1797,8 @@
         title: rec.title,
         author: rec.author,
         spice: rec.spice,
-        vibe: rec.vibe,
+        format: rec.format,
+        description: rec.description,
         date: new Date().toLocaleDateString('en-IE', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
       });
       localStorage.setItem('oracle_host_records', JSON.stringify(records));
@@ -1524,9 +1816,12 @@
         container.innerHTML = records.map(r => `
           <div class="host-record-item">
             <div class="host-record-title">${r.title}</div>
-            <div class="host-record-meta">${r.author} • ${r.spice}</div>
-            <div style="font-size: 0.8rem; color: var(--gold-light);">
+            <div class="host-record-meta">${r.author} • ${r.spice} • ${r.format}</div>
+            <div style="font-size: 0.8rem; color: var(--gold-light); margin-bottom: 6px;">
               👤 Member: <strong>${r.memberName}</strong> | 🕒 ${r.date}
+            </div>
+            <div class="host-synopsis-box">
+              <strong>Overview:</strong> ${r.description}
             </div>
           </div>
         `).join('');
@@ -1536,10 +1831,12 @@
     }
 
     function closeHostModal() {
+      soundEngine.playClick();
       document.getElementById('hostModal').classList.remove('active');
     }
 
     function clearHostRecords() {
+      soundEngine.playClick();
       if (confirm("Clear all host registry secret submissions?")) {
         localStorage.removeItem('oracle_host_records');
         updateHostBadgeCount();
@@ -1552,6 +1849,7 @@
     }
 
     function resetOracle() {
+      soundEngine.playClick();
       showStep(1);
     }
 
