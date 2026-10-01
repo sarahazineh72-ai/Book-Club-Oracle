@@ -1,475 +1,956 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>The Book Oracle — Celestial Reading Matcher</title>
-  
-  <!-- Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
-  
-  <!-- Canvas Confetti Library -->
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Book Oracle — Celestial Reading Matcher</title>
+  
+  <!-- Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  
+  <!-- Canvas Confetti Library -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
-  <style>
-    :root {
-      --bg-deep: #070913;
-      --gold-primary: #d4af37;
-      --gold-light: #f3e5ab;
-      --gold-dark: #aa7c11;
-      --purple-accent: #3b1c5a;
-      --card-bg: rgba(18, 15, 32, 0.88);
-      --text-main: #ece8f5;
-    }
+  <style>
+    :root {
+      --bg-deep: #070913;
+      --gold-primary: #d4af37;
+      --gold-light: #f3e5ab;
+      --gold-dark: #aa7c11;
+      --purple-accent: #3b1c5a;
+      --purple-light: #522d7a;
+      --card-bg: rgba(18, 15, 32, 0.88);
+      --input-bg: rgba(10, 8, 20, 0.7);
+      --text-main: #ece8f5;
+      --text-muted: #a49bbb;
+    }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-    body {
-      background-color: var(--bg-deep);
-      background-image: radial-gradient(circle at 50% 25%, #1e1133 0%, #070913 85%);
-      color: var(--text-main);
-      font-family: 'Cormorant Garamond', serif;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-    }
+    body {
+      background-color: var(--bg-deep);
+      background-image: 
+        radial-gradient(circle at 50% 20%, #1e1133 0%, #070913 80%),
+        radial-gradient(circle at 10% 80%, rgba(59, 28, 90, 0.3) 0%, transparent 50%),
+        radial-gradient(circle at 90% 80%, rgba(212, 175, 55, 0.15) 0%, transparent 50%);
+      color: var(--text-main);
+      font-family: 'Cormorant Garamond', serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px 15px;
+    }
 
-    .container {
-      width: 100%;
-      max-width: 620px;
-      text-align: center;
-    }
+    .container {
+      width: 100%;
+      max-width: 680px;
+      text-align: center;
+    }
 
-    h1 {
-      font-family: 'Cinzel Decorative', cursive;
-      color: var(--gold-light);
-      font-size: 2.3rem;
-      text-shadow: 0 0 15px rgba(212, 175, 55, 0.5);
-      margin-bottom: 8px;
-    }
+    h1 {
+      font-family: 'Cinzel Decorative', cursive;
+      color: var(--gold-light);
+      font-size: clamp(1.8rem, 5vw, 2.5rem);
+      text-shadow: 0 0 15px rgba(212, 175, 55, 0.5);
+      margin-bottom: 6px;
+    }
 
-    .subtitle {
-      font-family: 'Cinzel', serif;
-      color: #9a8cbe;
-      font-size: 0.95rem;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      margin-bottom: 30px;
-    }
+    .subtitle {
+      font-family: 'Cinzel', serif;
+      color: var(--text-muted);
+      font-size: clamp(0.75rem, 2.5vw, 0.95rem);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 25px;
+    }
 
-    .box {
-      background: var(--card-bg);
-      border: 1px solid var(--gold-primary);
-      border-radius: 12px;
-      padding: 30px;
-      box-shadow: 0 0 30px rgba(0,0,0,0.6);
-      backdrop-filter: blur(10px);
-      margin-bottom: 20px;
-    }
+    /* Progress Tracker */
+    .progress-bar {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 25px;
+      position: relative;
+    }
 
-    .upload-box label.custom-file-upload {
-      display: inline-block;
-      padding: 12px 24px;
-      cursor: pointer;
-      border: 1px dashed var(--gold-primary);
-      border-radius: 8px;
-      color: #bfa8e0;
-      margin: 15px 0;
-      transition: all 0.3s;
-      font-family: 'Cinzel', serif;
-      font-size: 0.95rem;
-    }
+    .progress-bar::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 10%;
+      right: 10%;
+      height: 1px;
+      background: rgba(212, 175, 55, 0.25);
+      z-index: 1;
+      transform: translateY(-50%);
+    }
 
-    .upload-box label.custom-file-upload:hover {
-      background: rgba(212, 175, 55, 0.1);
-      color: var(--gold-light);
-    }
+    .step-node {
+      position: relative;
+      z-index: 2;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--bg-deep);
+      border: 1px solid var(--gold-dark);
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Cinzel', serif;
+      font-size: 0.85rem;
+      transition: all 0.4s ease;
+    }
 
-    input[type="file"] {
-      display: none;
-    }
+    .step-node.active {
+      border-color: var(--gold-light);
+      background: var(--purple-accent);
+      color: var(--gold-light);
+      box-shadow: 0 0 12px rgba(212, 175, 55, 0.6);
+    }
 
-    .btn {
-      background: linear-gradient(135deg, var(--gold-primary), var(--gold-dark));
-      color: #100b1a;
-      border: none;
-      padding: 12px 28px;
-      font-family: 'Cinzel', serif;
-      font-weight: 700;
-      font-size: 0.95rem;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: all 0.3s;
-    }
+    .step-node.completed {
+      background: var(--gold-primary);
+      color: #070913;
+      border-color: var(--gold-light);
+    }
 
-    .btn:hover {
-      box-shadow: 0 0 20px rgba(212, 175, 55, 0.6);
-      transform: translateY(-2px);
-    }
+    /* Cards */
+    .box {
+      background: var(--card-bg);
+      border: 1px solid rgba(212, 175, 55, 0.4);
+      border-radius: 14px;
+      padding: clamp(20px, 4vw, 32px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(12px);
+      margin-bottom: 20px;
+      text-align: left;
+      display: none;
+      animation: fadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
 
-    .seal-section {
-      display: none;
-    }
+    .box.active {
+      display: block;
+    }
 
-    .seal-orb {
-      width: 90px;
-      height: 90px;
-      margin: 0 auto 20px auto;
-      background: radial-gradient(circle, #f3e5ab 0%, #aa7c11 70%, #3b1c5a 100%);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 0 30px rgba(212, 175, 55, 0.6);
-      border: 2px solid var(--gold-light);
-      cursor: pointer;
-      font-size: 2.2rem;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
 
-    .seal-orb:hover {
-      transform: scale(1.08);
-      box-shadow: 0 0 45px rgba(212, 175, 55, 0.9);
-    }
+    .section-title {
+      font-family: 'Cinzel', serif;
+      color: var(--gold-light);
+      font-size: 1.25rem;
+      margin-bottom: 8px;
+      text-align: center;
+    }
 
-    .stats-badge {
-      display: inline-block;
-      background: rgba(59, 28, 90, 0.5);
-      border: 1px solid var(--gold-dark);
-      padding: 6px 16px;
-      border-radius: 20px;
-      color: var(--gold-light);
-      font-size: 0.9rem;
-      margin-bottom: 20px;
-      font-family: 'Cinzel', serif;
-    }
+    .section-desc {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+      text-align: center;
+      line-height: 1.4;
+    }
 
-    .reveal-card {
-      display: none;
-      text-align: center;
-    }
+    /* Form & Option Grid styling */
+    .form-group {
+      margin-bottom: 20px;
+    }
 
-    .reveal-card.active {
-      display: block;
-      animation: fadeIn 0.8s ease-out;
-    }
+    .form-label {
+      display: block;
+      font-family: 'Cinzel', serif;
+      color: var(--gold-light);
+      font-size: 0.9rem;
+      margin-bottom: 8px;
+      letter-spacing: 0.5px;
+    }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
+    .options-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 10px;
+      margin-bottom: 15px;
+    }
 
-    .reader-greeting {
-      font-family: 'Cinzel', serif;
-      color: var(--gold-primary);
-      font-size: 0.85rem;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      margin-bottom: 12px;
-    }
+    .option-card {
+      background: var(--input-bg);
+      border: 1px solid rgba(212, 175, 55, 0.25);
+      border-radius: 8px;
+      padding: 10px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      user-select: none;
+    }
 
-    .book-title {
-      font-family: 'Cinzel Decorative', cursive;
-      color: var(--gold-light);
-      font-size: 1.8rem;
-      margin-bottom: 6px;
-    }
+    .option-card:hover {
+      border-color: var(--gold-primary);
+      background: rgba(59, 28, 90, 0.4);
+    }
 
-    .book-author {
-      font-family: 'Cinzel', serif;
-      color: #bfa8e0;
-      font-size: 1.1rem;
-      font-style: italic;
-      margin-bottom: 18px;
-    }
+    .option-card.selected {
+      border-color: var(--gold-light);
+      background: rgba(59, 28, 90, 0.85);
+      box-shadow: 0 0 12px rgba(212, 175, 55, 0.3);
+    }
 
-    .vibe-tag {
-      display: inline-block;
-      padding: 6px 18px;
-      background: rgba(59, 28, 90, 0.6);
-      border: 1px solid var(--gold-dark);
-      border-radius: 20px;
-      color: var(--gold-light);
-      font-size: 0.85rem;
-      font-family: 'Cinzel', serif;
-      margin-bottom: 22px;
-    }
+    .option-icon {
+      font-size: 1.3rem;
+      margin-bottom: 4px;
+      display: block;
+    }
 
-    .reason-box {
-      border-top: 1px solid rgba(212, 175, 55, 0.2);
-      padding-top: 18px;
-      font-size: 1.1rem;
-      line-height: 1.6;
-      color: var(--text-main);
-    }
+    .option-title {
+      font-family: 'Cinzel', serif;
+      font-size: 0.8rem;
+      color: var(--text-main);
+    }
 
-    .file-name {
-      display: block;
-      font-size: 0.9rem;
-      color: var(--gold-light);
-      margin-bottom: 15px;
-    }
-  </style>
+    /* Inputs */
+    input[type="text"], textarea {
+      width: 100%;
+      background: var(--input-bg);
+      border: 1px solid rgba(212, 175, 55, 0.3);
+      border-radius: 8px;
+      padding: 10px 14px;
+      color: var(--text-main);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+
+    input[type="text"]:focus, textarea:focus {
+      border-color: var(--gold-primary);
+      box-shadow: 0 0 8px rgba(212, 175, 55, 0.3);
+    }
+
+    .upload-area {
+      border: 2px dashed rgba(212, 175, 55, 0.4);
+      border-radius: 10px;
+      padding: 25px 15px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s;
+      background: rgba(10, 8, 20, 0.4);
+      margin-bottom: 15px;
+    }
+
+    .upload-area:hover {
+      border-color: var(--gold-light);
+      background: rgba(59, 28, 90, 0.2);
+    }
+
+    input[type="file"] {
+      display: none;
+    }
+
+    .file-status {
+      font-size: 0.9rem;
+      color: var(--gold-light);
+      margin-top: 8px;
+      display: block;
+      text-align: center;
+      font-family: 'Cinzel', serif;
+    }
+
+    /* Action Buttons */
+    .btn-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 25px;
+    }
+
+    .btn {
+      background: linear-gradient(135deg, var(--gold-primary), var(--gold-dark));
+      color: #070913;
+      border: none;
+      padding: 12px 24px;
+      font-family: 'Cinzel', serif;
+      font-weight: 700;
+      font-size: 0.9rem;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      flex: 1;
+    }
+
+    .btn:hover {
+      box-shadow: 0 0 18px rgba(212, 175, 55, 0.5);
+      transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      border: 1px solid var(--gold-dark);
+      color: var(--text-muted);
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--gold-light);
+      color: var(--gold-light);
+      background: rgba(212, 175, 55, 0.1);
+      box-shadow: none;
+    }
+
+    /* Unseal Orb Step */
+    .seal-box {
+      text-align: center;
+    }
+
+    .seal-orb {
+      width: 100px;
+      height: 100px;
+      margin: 20px auto;
+      background: radial-gradient(circle, #f3e5ab 0%, #aa7c11 65%, #3b1c5a 100%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 35px rgba(212, 175, 55, 0.6);
+      border: 2px solid var(--gold-light);
+      cursor: pointer;
+      font-size: 2.5rem;
+      transition: transform 0.4s ease, box-shadow 0.4s ease;
+      animation: pulse 2.5s infinite alternate;
+    }
+
+    @keyframes pulse {
+      from { box-shadow: 0 0 25px rgba(212, 175, 55, 0.4); transform: scale(0.98); }
+      to { box-shadow: 0 0 45px rgba(212, 175, 55, 0.8); transform: scale(1.04); }
+    }
+
+    .seal-orb:hover {
+      transform: scale(1.1) rotate(10deg);
+      box-shadow: 0 0 55px rgba(212, 175, 55, 1);
+    }
+
+    .stats-badge {
+      display: inline-block;
+      background: rgba(59, 28, 90, 0.6);
+      border: 1px solid var(--gold-dark);
+      padding: 6px 16px;
+      border-radius: 20px;
+      color: var(--gold-light);
+      font-size: 0.85rem;
+      margin-bottom: 15px;
+      font-family: 'Cinzel', serif;
+    }
+
+    /* Reveal Card */
+    .reveal-card {
+      text-align: center;
+    }
+
+    .reader-greeting {
+      font-family: 'Cinzel', serif;
+      color: var(--gold-primary);
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 10px;
+    }
+
+    .book-title {
+      font-family: 'Cinzel Decorative', cursive;
+      color: var(--gold-light);
+      font-size: clamp(1.4rem, 4vw, 1.9rem);
+      margin-bottom: 6px;
+      line-height: 1.25;
+    }
+
+    .book-author {
+      font-family: 'Cinzel', serif;
+      color: #bfa8e0;
+      font-size: 1.1rem;
+      font-style: italic;
+      margin-bottom: 18px;
+    }
+
+    .vibe-tag {
+      display: inline-block;
+      padding: 6px 18px;
+      background: rgba(59, 28, 90, 0.6);
+      border: 1px solid var(--gold-dark);
+      border-radius: 20px;
+      color: var(--gold-light);
+      font-size: 0.85rem;
+      font-family: 'Cinzel', serif;
+      margin-bottom: 20px;
+    }
+
+    .insight-pills {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .pill {
+      background: rgba(10, 8, 20, 0.8);
+      border: 1px solid rgba(212, 175, 55, 0.3);
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .reason-box {
+      border-top: 1px solid rgba(212, 175, 55, 0.25);
+      padding-top: 18px;
+      font-size: 1.1rem;
+      line-height: 1.65;
+      color: var(--text-main);
+      text-align: left;
+    }
+
+    .trope-chip {
+      display: inline-block;
+      padding: 4px 10px;
+      margin: 3px;
+      border-radius: 6px;
+      background: rgba(212, 175, 55, 0.1);
+      border: 1px solid rgba(212, 175, 55, 0.3);
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .trope-chip.selected {
+      background: var(--gold-primary);
+      color: #070913;
+      border-color: var(--gold-light);
+    }
+  </style>
 </head>
 <body>
 
-  <div class="container">
-    <h1>The Book Oracle</h1>
-    <div class="subtitle">A Celestial Reading Recommendation</div>
+  <div class="container">
+    <h1>The Book Oracle</h1>
+    <div class="subtitle">Celestial Reading Matcher</div>
 
-    <!-- Step 1: Upload Section -->
-    <div class="box upload-box" id="uploadSection">
-      <h2 style="font-family: 'Cinzel'; color: var(--gold-light); font-size: 1.3rem; margin-bottom: 10px;">Consult the Celestial Library</h2>
-      <p style="font-size: 0.95rem; color: #a49bbb; margin-bottom: 15px;">
-        Upload your StoryGraph or Goodreads CSV export file to unseal your personalized match.
-      </p>
-      
-      <label for="csvInput" class="custom-file-upload">
-        📁 Select CSV Export File
-      </label>
-      <input type="file" id="csvInput" accept=".csv" onchange="showFileName()">
-      <span class="file-name" id="fileNameDisplay"></span>
-      
-      <br>
-      <button class="btn" onclick="analyzeCSV()">🔮 Consult the Oracle</button>
-    </div>
+    <!-- Step Progress Indicator -->
+    <div class="progress-bar">
+      <div class="step-node active" id="node1">1</div>
+      <div class="step-node" id="node2">2</div>
+      <div class="step-node" id="node3">3</div>
+      <div class="step-node" id="node4">4</div>
+    </div>
 
-    <!-- Step 2: Unseal Section -->
-    <div class="box seal-section" id="sealSection">
-      <div id="statsBadge" class="stats-badge">Analyzing library...</div>
-      <div class="seal-orb" onclick="unsealCard()">✨</div>
-      <p style="font-family: 'Cinzel'; color: var(--gold-light); font-size: 1.2rem;">The Oracle Has Spoken!</p>
-      <p style="color: #a49bbb; font-size: 0.95rem; margin-top: 5px;">Click the celestial seal to reveal your match</p>
-    </div>
+    <!-- STEP 1: CSV Upload -->
+    <div class="box active" id="step1">
+      <div class="section-title">Step 1: Consult the Library</div>
+      <div class="section-desc">Upload your StoryGraph or Goodreads CSV export to let the Oracle analyze your reading history.</div>
+      
+      <div class="upload-area" onclick="document.getElementById('csvInput').click()">
+        <div style="font-size: 2rem; margin-bottom: 8px;">📚</div>
+        <div style="font-family: 'Cinzel'; color: var(--gold-light);">Click or Drag CSV File Here</div>
+        <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;">Supports Goodreads or StoryGraph Exports</div>
+      </div>
+      <input type="file" id="csvInput" accept=".csv" onchange="handleFileSelect()">
+      <span class="file-status" id="fileNameDisplay">No library uploaded yet (Optional)</span>
 
-    <!-- Step 3: Reveal Card -->
-    <div class="box reveal-card" id="revealCard">
-      <div class="reader-greeting">Curated for Your Library</div>
-      <div class="book-title" id="cardTitle">Title Placeholder</div>
-      <div class="book-author" id="cardAuthor">by Author</div>
-      <div class="vibe-tag" id="cardVibe">Vibe Tags</div>
-      <div class="reason-box" id="cardReason">Reason placeholder...</div>
-    </div>
-  </div>
+      <div class="btn-row">
+        <button class="btn btn-secondary" onclick="skipCSV()">Continue Without CSV</button>
+        <button class="btn" onclick="nextStep(2)">Proceed to Preferences 🔮</button>
+      </div>
+    </div>
 
-  <script>
-    let generatedRecommendation = null;
+    <!-- STEP 2: Preferences & Mood Quiz -->
+    <div class="box" id="step2">
+      <div class="section-title">Step 2: Celestial Reading Quiz</div>
+      <div class="section-desc">Align your current mood and reading desires so the Oracle can formulate your exact match.</div>
 
-    function showFileName() {
-      const input = document.getElementById('csvInput');
-      const nameDisplay = document.getElementById('fileNameDisplay');
-      if (input.files.length > 0) {
-        nameDisplay.innerText = "Loaded: " + input.files[0].name;
-      }
-    }
+      <!-- Mood / Intent -->
+      <div class="form-group">
+        <label class="form-label">1. Current Reading Mood / Energy</label>
+        <div class="options-grid" id="moodGrid">
+          <div class="option-card selected" onclick="selectOption('moodGrid', this, 'cozy')">
+            <span class="option-icon">☕</span>
+            <span class="option-title">Cozy Read</span>
+          </div>
+          <div class="option-card" onclick="selectOption('moodGrid', this, 'thrilling')">
+            <span class="option-icon">⚡</span>
+            <span class="option-title">Fast & High-Tension</span>
+          </div>
+          <div class="option-card" onclick="selectOption('moodGrid', this, 'mind-bending')">
+            <span class="option-icon">🧠</span>
+            <span class="option-title">Challenging / Deep</span>
+          </div>
+          <div class="option-card" onclick="selectOption('moodGrid', this, 'emotional')">
+            <span class="option-icon">💧</span>
+            <span class="option-title">Emotional Rollercoaster</span>
+          </div>
+          <div class="option-card" onclick="selectOption('moodGrid', this, 'wildcard')">
+            <span class="option-icon">🎲</span>
+            <span class="option-title">Complete Wildcard</span>
+          </div>
+        </div>
+      </div>
 
-    /**
-     * Robust CSV Line Parser
-     * Handles commas inside quotes, escaped quotes, and multiline values.
-     */
-    function parseCSV(text) {
-      const rows = [];
-      let currentRow = [];
-      let currentToken = '';
-      let insideQuotes = false;
+      <!-- Source Selection -->
+      <div class="form-group">
+        <label class="form-label">2. Recommendation Source</label>
+        <div class="options-grid" id="sourceGrid">
+          <div class="option-card selected" onclick="selectOption('sourceGrid', this, 'tbr')">
+            <span class="option-icon">📑</span>
+            <span class="option-title">Strictly My TBR</span>
+          </div>
+          <div class="option-card" onclick="selectOption('sourceGrid', this, 'new')">
+            <span class="option-icon">✨</span>
+            <span class="option-title">Outside My TBR (New)</span>
+          </div>
+          <div class="option-card" onclick="selectOption('sourceGrid', this, 'mix')">
+            <span class="option-icon">🔮</span>
+            <span class="option-title">Surprise Me (Mix)</span>
+          </div>
+        </div>
+      </div>
 
-      for (let i = 0; i < text.length; i++) {
-        const char = text[i];
-        const nextChar = text[i + 1];
+      <!-- Seasonal / Vibe -->
+      <div class="form-group">
+        <label class="form-label">3. Seasonal Vibe & Atmosphere</label>
+        <div class="options-grid" id="vibeGrid">
+          <div class="option-card selected" onclick="selectOption('vibeGrid', this, 'festive')">
+            <span class="option-icon">🍂</span>
+            <span class="option-title">Festive / Autumnal</span>
+          </div>
+          <div class="option-card" onclick="selectOption('vibeGrid', this, 'gothic')">
+            <span class="option-icon">🏰</span>
+            <span class="option-title">Dark Academia / Gothic</span>
+          </div>
+          <div class="option-card" onclick="selectOption('vibeGrid', this, 'feelgood')">
+            <span class="option-icon">☀️</span>
+            <span class="option-title">Warm & Uplifting</span>
+          </div>
+          <div class="option-card" onclick="selectOption('vibeGrid', this, 'evergreen')">
+            <span class="option-icon">🌿</span>
+            <span class="option-title">No Vibe Preference</span>
+          </div>
+        </div>
+      </div>
 
-        if (char === '"') {
-          if (insideQuotes && nextChar === '"') {
-            currentToken += '"';
-            i++; // skip escaped quote
-          } else {
-            insideQuotes = !insideQuotes;
-          }
-        } else if (char === ',' && !insideQuotes) {
-          currentRow.push(currentToken.trim());
-          currentToken = '';
-        } else if ((char === '\r' || char === '\n') && !insideQuotes) {
-          if (char === '\r' && nextChar === '\n') {
-            i++; // skip \n in \r\n
-          }
-          currentRow.push(currentToken.trim());
-          if (currentRow.some(cell => cell.length > 0)) {
-            rows.push(currentRow);
-          }
-          currentRow = [];
-          currentToken = '';
-        } else {
-          currentToken += char;
-        }
-      }
+      <!-- Guided Prompts for Extra Precision -->
+      <div class="form-group">
+        <label class="form-label">4. Specific Tropes / Themes Desired</label>
+        <div id="tropeChips">
+          <span class="trope-chip" onclick="toggleTrope(this)">Enemies to Lovers</span>
+          <span class="trope-chip" onclick="toggleTrope(this)">Dark Academia</span>
+          <span class="trope-chip" onclick="toggleTrope(this)">Found Family</span>
+          <span class="trope-chip" onclick="toggleTrope(this)">Spicy Romance</span>
+          <span class="trope-chip" onclick="toggleTrope(this)">Cozy Mystery</span>
+          <span class="trope-chip" onclick="toggleTrope(this)">Gothic Romance</span>
+          <span class="trope-chip" onclick="toggleTrope(this)">Heist / Morally Grey</span>
+        </div>
+      </div>
 
-      if (currentToken.length > 0 || currentRow.length > 0) {
-        currentRow.push(currentToken.trim());
-        rows.push(currentRow);
-      }
+      <div class="form-group">
+        <label class="form-label">5. Optional Reading Insights</label>
+        <input type="text" id="recentFiveStar" placeholder="Most recent 5-star read (e.g. 'Fourth Wing', 'The Secret History')" style="margin-bottom: 8px;">
+        <input type="text" id="recentDNF" placeholder="Recent DNF or tropes to avoid (e.g. slow pacing, love triangles)">
+      </div>
 
-      if (rows.length < 2) return [];
+      <div class="btn-row">
+        <button class="btn btn-secondary" onclick="nextStep(1)">Back</button>
+        <button class="btn" onclick="processOracleDecision()">Consult The Oracle ✨</button>
+      </div>
+    </div>
 
-      // Convert header array to lowercase for flexible matching
-      const headers = rows[0].map(h => h.toLowerCase().replace(/^"|"$/g, ''));
-      const parsedData = [];
+    <!-- STEP 3: Unseal Oracle Orb -->
+    <div class="box seal-box" id="step3">
+      <div class="section-title">The Celestial Oracle</div>
+      <div id="statsBadge" class="stats-badge">Library & Mood Pattern Aligned</div>
+      
+      <p style="color: var(--text-muted); font-size: 0.95rem;">The Oracle has parsed your cosmic alignments and reading history.</p>
+      
+      <div class="seal-orb" onclick="unsealCard()">✨</div>
+      
+      <p style="font-family: 'Cinzel'; color: var(--gold-light); font-size: 1.1rem;">Click the Seal to Reveal Your Match</p>
+    </div>
 
-      for (let i = 1; i < rows.length; i++) {
-        const row = rows[i];
-        if (row.length === 0) continue;
-        
-        const rowObj = {};
-        headers.forEach((header, index) => {
-          rowObj[header] = row[index] ? row[index].replace(/^"|"$/g, '') : '';
-        });
-        parsedData.push(rowObj);
-      }
+    <!-- STEP 4: Reveal Recommendation Card -->
+    <div class="box reveal-card" id="step4">
+      <div class="reader-greeting">Curated Specially For You</div>
+      <div class="book-title" id="cardTitle">Title Placeholder</div>
+      <div class="book-author" id="cardAuthor">by Author</div>
+      <div class="vibe-tag" id="cardVibe">Vibe Tags</div>
 
-      return parsedData;
-    }
+      <div class="insight-pills" id="cardPills">
+        <!-- Dynamic Pills -->
+      </div>
 
-    /**
-     * Extracts values from rows using multiple candidate column names
-     */
-    function getFieldValue(row, candidateKeys) {
-      for (const key of candidateKeys) {
-        if (row[key] !== undefined && row[key] !== '') {
-          return row[key];
-        }
-      }
-      return '';
-    }
+      <div class="reason-box" id="cardReason">
+        Reasoning placeholder...
+      </div>
 
-    // Main Analysis Engine
-    function analyzeCSV() {
-      const fileInput = document.getElementById('csvInput');
-      if (!fileInput.files.length) {
-        alert("Please select a CSV file first.");
-        return;
-      }
+      <div class="btn-row" style="margin-top: 25px;">
+        <button class="btn btn-secondary" onclick="resetOracle()">Consult Oracle Again 🔄</button>
+      </div>
+    </div>
+  </div>
 
-      const file = fileInput.files[0];
-      const reader = new FileReader();
+  <script>
+    // Application State
+    const state = {
+      currentStep: 1,
+      parsedBooks: { read: [], tbr: [] },
+      hasCSV: false,
+      quiz: {
+        mood: 'cozy',
+        source: 'tbr',
+        vibe: 'festive',
+        tropes: [],
+        fiveStar: '',
+        dnf: ''
+      },
+      recommendation: null
+    };
 
-      reader.onload = function(e) {
-        const fileContent = e.target.result;
-        const rows = parseCSV(fileContent);
+    // External Curated Catalog (Used when recommending outside TBR or when TBR is empty)
+    const curatedCatalog = [
+      {
+        title: "The Secret History",
+        author: "Donna Tartt",
+        vibe: "Dark Academia • Psychological • Intellectual",
+        mood: "mind-bending",
+        vibeType: "gothic",
+        tropes: ["Dark Academia", "Morally Grey"],
+        reason: "A quintessential dark academia masterpiece filled with suspense, intense friendships, and moral complexity."
+      },
+      {
+        title: "Legends & Lattes",
+        author: "Travis Baldree",
+        vibe: "Cozy Fantasy • Warm • Low Stakes",
+        mood: "cozy",
+        vibeType: "feelgood",
+        tropes: ["Cozy Mystery", "Found Family"],
+        reason: "A heartwarming, low-stakes cozy fantasy about an orc warrior opening a coffee shop. Pure comfort in book form."
+      },
+      {
+        title: "Gothikana",
+        author: "RuNyx",
+        vibe: "Gothic Romance • High Tension • Atmospheric",
+        mood: "thrilling",
+        vibeType: "gothic",
+        tropes: ["Gothic Romance", "Enemies to Lovers", "Dark Academia"],
+        reason: "A dark gothic romance set in a cliffside academy steeped in secrets, intense chemistry, and mystery."
+      },
+      {
+        title: "The Pumpkin Spice Cafe",
+        author: "Laurie Gilmore",
+        vibe: "Cozy Romance • Seasonal • Wholesome",
+        mood: "cozy",
+        vibeType: "festive",
+        tropes: ["Cozy Mystery", "Spicy Romance"],
+        reason: "The ultimate autumn aesthetic read featuring small-town charm, cozy coffee shop vibes, and heartwarming romance."
+      },
+      {
+        title: "Ninth House",
+        author: "Leigh Bardugo",
+        vibe: "Dark Urban Fantasy • Gritty • Intriguing",
+        mood: "mind-bending",
+        vibeType: "gothic",
+        tropes: ["Dark Academia", "Heist / Morally Grey"],
+        reason: "A thrilling occult mystery centered around secret secret societies at Yale University with high stakes."
+      },
+      {
+        title: "A Dowry of Blood",
+        author: "S.T. Gibson",
+        vibe: "Gothic Dracula Retelling • Poetic • Lush",
+        mood: "emotional",
+        vibeType: "gothic",
+        tropes: ["Gothic Romance", "Found Family"],
+        reason: "A lush, seductive, and emotional gothic story that reimagines Dracula's brides with breathtaking prose."
+      },
+      {
+        title: "The Seven Husbands of Evelyn Hugo",
+        author: "Taylor Jenkins Reid",
+        vibe: "Emotional Drama • Historical Fiction • High Emotion",
+        mood: "emotional",
+        vibeType: "evergreen",
+        tropes: ["Found Family"],
+        reason: "A captivating, emotionally charged journey through Old Hollywood secrets, glamour, and heartbreaking romance."
+      },
+      {
+        title: "Six of Crows",
+        author: "Leigh Bardugo",
+        vibe: "Fast-Paced Heist • Ensemble Cast • Thrilling",
+        mood: "thrilling",
+        vibeType: "evergreen",
+        tropes: ["Heist / Morally Grey", "Found Family", "Enemies to Lovers"],
+        reason: "A high-octane heist fantasy with an irresistible cast of morally grey rogues and unmatched squad dynamics."
+      }
+    ];
 
-        if (rows.length === 0) {
-          alert("Could not parse data from this CSV file. Please verify it is a standard StoryGraph or Goodreads export.");
-          return;
-        }
+    function showStep(stepNum) {
+      state.currentStep = stepNum;
+      document.querySelectorAll('.box').forEach(box => box.classList.remove('active'));
+      document.getElementById('step' + stepNum).classList.add('active');
 
-        const readBooks = [];
-        const tbrBooks = [];
+      // Update Node Indicators
+      for (let i = 1; i <= 4; i++) {
+        const node = document.getElementById('node' + i);
+        node.classList.remove('active', 'completed');
+        if (i < stepNum) {
+          node.classList.add('completed');
+          node.innerText = '✓';
+        } else if (i === stepNum) {
+          node.classList.add('active');
+          node.innerText = i;
+        } else {
+          node.innerText = i;
+        }
+      }
+    }
 
-        // Flexible key matching lists
-        const titleKeys = ['title'];
-        const authorKeys = ['authors', 'author', 'author/illustrator'];
-        const statusKeys = ['read status', 'exclusive shelf', 'bookshelves', 'status', 'shelf', 'shelves'];
+    function nextStep(stepNum) {
+      showStep(stepNum);
+    }
 
-        rows.forEach(r => {
-          const title = getFieldValue(r, titleKeys);
-          const author = getFieldValue(r, authorKeys);
-          const rawStatus = getFieldValue(r, statusKeys).toLowerCase();
+    function skipCSV() {
+      state.hasCSV = false;
+      document.getElementById('fileNameDisplay').innerText = "Skipped CSV Upload";
+      nextStep(2);
+    }
 
-          if (title) {
-            // Flexible shelf matching
-            const isRead = rawStatus.includes('read') && !rawStatus.includes('to-read') && !rawStatus.includes('want to read');
-            const isTBR = rawStatus.includes('to-read') || rawStatus.includes('want to read') || rawStatus.includes('read-next') || rawStatus.includes('tbr');
+    function selectOption(gridId, cardElem, val) {
+      const container = document.getElementById(gridId);
+      container.querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
+      cardElem.classList.add('selected');
 
-            if (isRead) {
-              readBooks.push({ title, author });
-            } else if (isTBR) {
-              tbrBooks.push({ title, author });
-            } else if (!rawStatus) {
-              // Default fallback for unassigned shelf rows
-              tbrBooks.push({ title, author });
-            }
-          }
-        });
+      if (gridId === 'moodGrid') state.quiz.mood = val;
+      if (gridId === 'sourceGrid') state.quiz.source = val;
+      if (gridId === 'vibeGrid') state.quiz.vibe = val;
+    }
 
-        const totalReadCount = readBooks.length;
-        const totalTBRCount = tbrBooks.length;
+    function toggleTrope(chipElem) {
+      chipElem.classList.toggle('selected');
+      const trope = chipElem.innerText;
+      if (state.quiz.tropes.includes(trope)) {
+        state.quiz.tropes = state.quiz.tropes.filter(t => t !== trope);
+      } else {
+        state.quiz.tropes.push(trope);
+      }
+    }
 
-        // Pattern matching on user's reading history
-        const allReadTitles = readBooks.map(b => b.title.toLowerCase()).join(' ');
-        
-        let targetGenre = "Dark Academia & Gothic Fantasy";
-        if (allReadTitles.includes('nocticadia') || allReadTitles.includes('dowry') || allReadTitles.includes('gothikana') || allReadTitles.includes('dark')) {
-          targetGenre = "Dark Academia & Gothic Romance";
-        } else if (allReadTitles.includes('throne') || allReadTitles.includes('court') || allReadTitles.includes('wing') || allReadTitles.includes('fourth')) {
-          targetGenre = "High Fantasy & Romantasy";
-        } else if (allReadTitles.includes('beach') || allReadTitles.includes('love') || allReadTitles.includes('paper')) {
-          targetGenre = "Contemporary Romance & High Emotion";
-        }
+    function handleFileSelect() {
+      const fileInput = document.getElementById('csvInput');
+      if (fileInput.files.length > 0) {
+        const file = fileInput.files[0];
+        document.getElementById('fileNameDisplay').innerText = "Loaded: " + file.name;
+        
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          parseCSVData(e.target.result);
+        };
+        reader.readAsText(file);
+      }
+    }
 
-        // Pick matching unread book from TBR or default fallback
-        let selectedTitle = "Gothikana";
-        let selectedAuthor = "RuNyx";
+    function parseCSVData(text) {
+      const rows = [];
+      let currentRow = [];
+      let currentToken = '';
+      let insideQuotes = false;
 
-        if (tbrBooks.length > 0) {
-          // Look for curated matches inside their own TBR list first
-          const matchingTBR = tbrBooks.find(b => {
-            const t = b.title.toLowerCase();
-            return t.includes('gothikana') || t.includes('window') || t.includes('jasmine') || t.includes('legendborn') || t.includes('serpent') || t.includes('belladonna');
-          });
+      for (let i = 0; i < text.length; i++) {
+        const char = text[i];
+        const nextChar = text[i + 1];
 
-          if (matchingTBR) {
-            selectedTitle = matchingTBR.title;
-            selectedAuthor = matchingTBR.author;
-          } else {
-            // Otherwise select an intriguing title from their unread list
-            const randomPick = tbrBooks[Math.floor(Math.random() * tbrBooks.length)];
-            selectedTitle = randomPick.title;
-            selectedAuthor = randomPick.author;
-          }
-        }
+        if (char === '"') {
+          if (insideQuotes && nextChar === '"') {
+            currentToken += '"';
+            i++;
+          } else {
+            insideQuotes = !insideQuotes;
+          }
+        } else if (char === ',' && !insideQuotes) {
+          currentRow.push(currentToken.trim());
+          currentToken = '';
+        } else if ((char === '\r' || char === '\n') && !insideQuotes) {
+          if (char === '\r' && nextChar === '\n') i++;
+          currentRow.push(currentToken.trim());
+          if (currentRow.some(c => c.length > 0)) rows.push(currentRow);
+          currentRow = [];
+          currentToken = '';
+        } else {
+          currentToken += char;
+        }
+      }
+      if (currentToken.length > 0 || currentRow.length > 0) {
+        currentRow.push(currentToken.trim());
+        rows.push(currentRow);
+      }
 
-        const authorFormatted = selectedAuthor.toLowerCase().startsWith('by') ? selectedAuthor : 'by ' + selectedAuthor;
+      if (rows.length < 2) return;
 
-        generatedRecommendation = {
-          title: selectedTitle,
-          author: authorFormatted,
-          vibe: `${targetGenre} • High Tension • Atmospheric`,
-          reason: `Analyzed from your reading history (${totalReadCount} read books & ${totalTBRCount} TBR wishlist books). Based on your preference for ${targetGenre}, this unread title from your library is your ideal celestial match!`
-        };
+      const headers = rows[0].map(h => h.toLowerCase().replace(/^"|"$/g, ''));
+      const parsedData = [];
 
-        // Update UI step 2
-        document.getElementById('statsBadge').innerText = `✨ Found ${totalReadCount} Read Books & ${totalTBRCount} TBR Books`;
-        document.getElementById('uploadSection').style.display = 'none';
-        document.getElementById('sealSection').style.display = 'block';
-      };
+      for (let i = 1; i < rows.length; i++) {
+        const row = rows[i];
+        if (row.length === 0) continue;
+        const rowObj = {};
+        headers.forEach((header, index) => {
+          rowObj[header] = row[index] ? row[index].replace(/^"|"$/g, '') : '';
+        });
+        parsedData.push(rowObj);
+      }
 
-      reader.readAsText(file);
-    }
+      const getVal = (row, keys) => {
+        for (const k of keys) {
+          if (row[k] !== undefined && row[k] !== '') return row[k];
+        }
+        return '';
+      };
 
-    function unsealCard() {
-      if (!generatedRecommendation) return;
+      const titleKeys = ['title'];
+      const authorKeys = ['authors', 'author', 'author/illustrator'];
+      const statusKeys = ['read status', 'exclusive shelf', 'bookshelves', 'status', 'shelf', 'shelves'];
 
-      document.getElementById('cardTitle').innerText = generatedRecommendation.title;
-      document.getElementById('cardAuthor').innerText = generatedRecommendation.author;
-      document.getElementById('cardVibe').innerText = generatedRecommendation.vibe;
-      document.getElementById('cardReason').innerText = generatedRecommendation.reason;
+      state.parsedBooks.read = [];
+      state.parsedBooks.tbr = [];
 
-      document.getElementById('sealSection').style.display = 'none';
-      document.getElementById('revealCard').classList.add('active');
+      parsedData.forEach(r => {
+        const title = getVal(r, titleKeys);
+        const author = getVal(r, authorKeys);
+        const status = getVal(r, statusKeys).toLowerCase();
 
-      confetti({
-        particleCount: 100,
-        spread: 80,
-        origin: { y: 0.6 },
-        colors: ['#d4af37', '#f3e5ab', '#3b1c5a']
-      });
-    }
-  </script>
+        if (title) {
+          const isRead = status.includes('read') && !status.includes('to-read') && !status.includes('want to read');
+          const isTBR = status.includes('to-read') || status.includes('want to read') || status.includes('read-next') || status.includes('tbr');
+
+          if (isRead) {
+            state.parsedBooks.read.push({ title, author });
+          } else if (isTBR) {
+            state.parsedBooks.tbr.push({ title, author });
+          } else {
+            state.parsedBooks.tbr.push({ title, author });
+          }
+        }
+      });
+
+      state.hasCSV = true;
+    }
+
+    function processOracleDecision() {
+      // Gather text inputs
+      state.quiz.fiveStar = document.getElementById('recentFiveStar').value.trim();
+      state.quiz.dnf = document.getElementById('recentDNF').value.trim();
+
+      let selectedBook = null;
+      let matchSource = "";
+
+      const preferTBR = state.quiz.source === 'tbr';
+      const preferNew = state.quiz.source === 'new';
+
+      if (preferTBR && state.parsedBooks.tbr.length > 0) {
+        // Match from TBR
+        const tbr = state.parsedBooks.tbr;
+        selectedBook = tbr[Math.floor(Math.random() * tbr.length)];
+        matchSource = "Your TBR List";
+      } else if (!preferTBR && preferNew) {
+        // Pick from Curated Catalog outside TBR
+        const matches = curatedCatalog.filter(b => b.mood === state.quiz.mood || b.vibeType === state.quiz.vibe);
+        selectedBook = matches.length > 0 ? matches[Math.floor(Math.random() * matches.length)] : curatedCatalog[0];
+        matchSource = "Celestial Library Beyond TBR";
+      } else {
+        // Mix / Surprise
+        if (state.parsedBooks.tbr.length > 0 && Math.random() > 0.5) {
+          selectedBook = state.parsedBooks.tbr[Math.floor(Math.random() * state.parsedBooks.tbr.length)];
+          matchSource = "Your TBR Wishlist";
+        } else {
+          selectedBook = curatedCatalog[Math.floor(Math.random() * curatedCatalog.length)];
+          matchSource = "Discovered Beyond Your TBR";
+        }
+      }
+
+      // Format Author Name
+      const authorFormatted = selectedBook.author.toLowerCase().startsWith('by') ? selectedBook.author : 'by ' + selectedBook.author;
+
+      // Build Rationale
+      let rationale = `The Oracle aligned your current preference for a ${state.quiz.mood.toUpperCase()} reading experience with your desired ${state.quiz.vibe.toUpperCase()} atmosphere. `;
+      
+      if (state.hasCSV) {
+        rationale += `Cross-referenced with your uploaded library history (${state.parsedBooks.read.length} read books), `;
+      }
+      
+      if (state.quiz.tropes.length > 0) {
+        rationale += `and incorporated your selected tropes (${state.quiz.tropes.join(', ')}). `;
+      }
+
+      if (selectedBook.reason) {
+        rationale += selectedBook.reason;
+      } else {
+        rationale += `This pick stands out as the optimal choice to ignite your current reading appetite!`;
+      }
+
+      state.recommendation = {
+        title: selectedBook.title,
+        author: authorFormatted,
+        vibe: selectedBook.vibe || `${state.quiz.mood.toUpperCase()} • ${state.quiz.vibe.toUpperCase()}`,
+        source: matchSource,
+        reason: rationale
+      };
+
+      // Set Step 3 Badge Stats
+      const badgeElem = document.getElementById('statsBadge');
+      if (state.hasCSV) {
+        badgeElem.innerText = `✨ ${state.parsedBooks.read.length} Read | ${state.parsedBooks.tbr.length} TBR Analyzed`;
+      } else {
+        badgeElem.innerText = `✨ Aligned with Mood: ${state.quiz.mood.toUpperCase()}`;
+      }
+
+      nextStep(3);
+    }
+
+    function unsealCard() {
+      if (!state.recommendation) return;
+
+      const rec = state.recommendation;
+      document.getElementById('cardTitle').innerText = rec.title;
+      document.getElementById('cardAuthor').innerText = rec.author;
+      document.getElementById('cardVibe').innerText = rec.vibe;
+      document.getElementById('cardReason').innerText = rec.reason;
+
+      // Dynamic Pills
+      const pillsContainer = document.getElementById('cardPills');
+      pillsContainer.innerHTML = `
+        <span class="pill">Source: ${rec.source}</span>
+        <span class="pill">Mood: ${state.quiz.mood}</span>
+        <span class="pill">Vibe: ${state.quiz.vibe}</span>
+      `;
+
+      nextStep(4);
+
+      // Trigger Celebration Confetti
+      confetti({
+        particleCount: 120,
+        spread: 90,
+        origin: { y: 0.6 },
+        colors: ['#d4af37', '#f3e5ab', '#3b1c5a', '#aa7c11']
+      });
+    }
+
+    function resetOracle() {
+      nextStep(1);
+    }
+  </script>
 </body>
 </html>
