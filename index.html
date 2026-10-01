@@ -3,86 +3,382 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Book Club Oracle</title>
+  <title>The Book Oracle — Celestial Reading Matcher</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  
+  <!-- Confetti JS -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
   <style>
-    /* BASIC STRUCTURE — Friend can redesign all CSS below */
+    :root {
+      --bg-deep: #070913;
+      --gold-primary: #d4af37;
+      --gold-light: #f3e5ab;
+      --gold-dark: #aa7c11;
+      --purple-accent: #3b1c5a;
+      --card-bg: rgba(18, 15, 32, 0.85);
+      --text-main: #ece8f5;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
     body {
-      font-family: sans-serif;
-      background: #111;
-      color: #fff;
-      text-align: center;
+      background-color: var(--bg-deep);
+      background-image: radial-gradient(circle at 50% 20%, #1e1133 0%, #070913 80%);
+      color: var(--text-main);
+      font-family: 'Cormorant Garamond', serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
       padding: 20px;
     }
-    .container { max-width: 600px; margin: 0 auto; }
-    .card {
-      background: #222;
-      border: 2px solid gold;
-      border-radius: 10px;
-      padding: 30px;
-      margin-top: 20px;
-      display: none; /* Hidden until unsealed */
+
+    .container {
+      width: 100%;
+      max-width: 600px;
+      text-align: center;
     }
-    .card.active { display: block; }
-    .seal-btn {
-      background: gold;
-      color: #000;
-      border: none;
-      padding: 15px 30px;
+
+    /* Header styling */
+    h1 {
+      font-family: 'Cinzel Decorative', cursive;
+      color: var(--gold-light);
+      font-size: 2.2rem;
+      text-shadow: 0 0 15px rgba(212, 175, 55, 0.5);
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      font-family: 'Cinzel', serif;
+      color: #9a8cbe;
+      font-size: 0.95rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 30px;
+    }
+
+    /* Section Boxes */
+    .box {
+      background: var(--card-bg);
+      border: 1px solid var(--gold-primary);
+      border-radius: 12px;
+      padding: 30px;
+      box-shadow: 0 0 30px rgba(0,0,0,0.5);
+      backdrop-filter: blur(10px);
+      margin-bottom: 20px;
+    }
+
+    /* Step 1: Upload Box */
+    .upload-box label {
+      display: block;
+      font-family: 'Cinzel', serif;
+      color: var(--gold-light);
       font-size: 1.1rem;
-      border-radius: 8px;
+      margin-bottom: 15px;
+    }
+
+    input[type="file"] {
+      display: none;
+    }
+
+    .custom-file-upload {
+      display: inline-block;
+      padding: 10px 20px;
       cursor: pointer;
+      border: 1px dashed var(--gold-primary);
+      border-radius: 8px;
+      color: #bfa8e0;
+      margin-bottom: 20px;
+      transition: all 0.3s;
+    }
+
+    .custom-file-upload:hover {
+      background: rgba(212, 175, 55, 0.1);
+      color: var(--gold-light);
+    }
+
+    .btn {
+      background: linear-gradient(135deg, var(--gold-primary), var(--gold-dark));
+      color: #100b1a;
+      border: none;
+      padding: 12px 28px;
+      font-family: 'Cinzel', serif;
+      font-weight: 700;
+      font-size: 0.95rem;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .btn:hover {
+      box-shadow: 0 0 20px rgba(212, 175, 55, 0.6);
+      transform: translateY(-2px);
+    }
+
+    /* Step 2: Seal Section */
+    .seal-section {
+      display: none;
+    }
+
+    .seal-orb {
+      width: 90px;
+      height: 90px;
+      margin: 0 auto 20px auto;
+      background: radial-gradient(circle, #f3e5ab 0%, #aa7c11 70%, #3b1c5a 100%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 30px rgba(212, 175, 55, 0.6);
+      border: 2px solid var(--gold-light);
+      cursor: pointer;
+      font-size: 2.2rem;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .seal-orb:hover {
+      transform: scale(1.08);
+      box-shadow: 0 0 45px rgba(212, 175, 55, 0.9);
+    }
+
+    /* Step 3: Reveal Card */
+    .reveal-card {
+      display: none;
+      text-align: center;
+    }
+
+    .reveal-card.active {
+      display: block;
+      animation: fadeIn 0.8s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .reader-greeting {
+      font-family: 'Cinzel', serif;
+      color: var(--gold-primary);
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 12px;
+    }
+
+    .book-title {
+      font-family: 'Cinzel Decorative', cursive;
+      color: var(--gold-light);
+      font-size: 1.8rem;
+      margin-bottom: 6px;
+    }
+
+    .book-author {
+      font-family: 'Cinzel', serif;
+      color: #bfa8e0;
+      font-size: 1.1rem;
+      font-style: italic;
+      margin-bottom: 18px;
+    }
+
+    .vibe-tag {
+      display: inline-block;
+      padding: 6px 18px;
+      background: rgba(59, 28, 90, 0.6);
+      border: 1px solid var(--gold-dark);
+      border-radius: 20px;
+      color: var(--gold-light);
+      font-size: 0.85rem;
+      font-family: 'Cinzel', serif;
+      margin-bottom: 22px;
+    }
+
+    .reason-box {
+      border-top: 1px solid rgba(212, 175, 55, 0.2);
+      padding-top: 18px;
+      font-size: 1.1rem;
+      line-height: 1.6;
+      color: var(--text-main);
+    }
+
+    .file-name {
+      display: block;
+      font-size: 0.9rem;
+      color: var(--gold-light);
+      margin-top: -10px;
+      margin-bottom: 15px;
     }
   </style>
 </head>
 <body>
 
   <div class="container">
-    <h1>Book Club Oracle</h1>
-    
-    <!-- FILE UPLOAD SECTION (Backend functionality) -->
-    <div style="margin-bottom: 20px;">
-      <input type="file" id="csvFile" accept=".csv">
-      <button onclick="processCSV()">Upload & Process CSV</button>
+    <h1>The Book Oracle</h1>
+    <div class="subtitle">A Celestial Reading Recommendation</div>
+
+    <!-- Step 1: Upload Section -->
+    <div class="box upload-box" id="uploadSection">
+      <label for="csvInput">Consult the Celestial Library</label>
+      <p style="font-size: 0.95rem; color: #a49bbb; margin-bottom: 20px;">
+        Upload a StoryGraph or Goodreads CSV file to analyze your reading history.
+      </p>
+      
+      <label for="csvInput" class="custom-file-upload">
+        📁 Select CSV File
+      </label>
+      <input type="file" id="csvInput" accept=".csv" onchange="showFileName()">
+      <span class="file-name" id="fileNameDisplay"></span>
+      
+      <br>
+      <button class="btn" onclick="analyzeCSV()">🔮 Consult the Oracle</button>
     </div>
 
-    <!-- SEALED BUTTON (UI reveal trigger) -->
-    <div id="sealView">
-      <button class="seal-btn" onclick="revealBook()">✨ Break the Seal ✨</button>
+    <!-- Step 2: Unseal Section -->
+    <div class="box seal-section" id="sealSection">
+      <div class="seal-orb" onclick="unsealCard()">✨</div>
+      <p style="font-family: 'Cinzel'; color: var(--gold-light); font-size: 1.2rem;">The Oracle Has Spoken!</p>
+      <p style="color: #a49bbb; font-size: 0.95rem; margin-top: 5px;">Click the celestial seal to reveal your match</p>
     </div>
 
-    <!-- REVEAL CARD (Friend can style this layout) -->
-    <div id="revealCard" class="card">
-      <h2 id="bookTitle">Title Placeholder</h2>
-      <h3 id="bookAuthor">Author Placeholder</h3>
-      <p id="bookVibe">Vibe Tags Placeholder</p>
-      <p id="bookReason">Reason Placeholder</p>
+    <!-- Step 3: Reveal Card -->
+    <div class="box reveal-card" id="revealCard">
+      <div class="reader-greeting">Curated for Your Library</div>
+      <div class="book-title" id="cardTitle">Title Placeholder</div>
+      <div class="book-author" id="cardAuthor">by Author</div>
+      <div class="vibe-tag" id="cardVibe">Vibe Tags</div>
+      <div class="reason-box" id="cardReason">Reason placeholder...</div>
     </div>
   </div>
 
   <script>
-    // CSV PARSER (Your backend logic)
-    function processCSV() {
-      const fileInput = document.getElementById('csvFile');
-      if (!fileInput.files.length) return alert('Please select a CSV file.');
-      
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        // Simple logic placeholder - reads CSV data
-        alert('CSV File Processed! Click "Break the Seal" to reveal recommendation.');
-        
-        // Auto-populate card fields
-        document.getElementById('bookTitle').innerText = "Gothikana";
-        document.getElementById('bookAuthor').innerText = "by RuNyx";
-        document.getElementById('bookVibe').innerText = "Dark Academia • Gothic Romance";
-        document.getElementById('bookReason').innerText = "Selected based on your highest rated dark fantasy reads!";
-      };
-      reader.readAsText(fileInput.files[0]);
+    let generatedRecommendation = null;
+
+    function showFileName() {
+      const input = document.getElementById('csvInput');
+      const nameDisplay = document.getElementById('fileNameDisplay');
+      if (input.files.length > 0) {
+        nameDisplay.innerText = "Loaded: " + input.files[0].name;
+      }
     }
 
-    // REVEAL ANIMATION TRIGGER
-    function revealBook() {
-      document.getElementById('sealView').style.display = 'none';
+    // Helper: Parses CSV text into array of object rows
+    function parseCSVText(text) {
+      const lines = text.split(/\r\n|\n/);
+      if (lines.length < 2) return [];
+      
+      const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g, ''));
+      const rows = [];
+
+      for (let i = 1; i < lines.length; i++) {
+        if (!lines[i].trim()) continue;
+        const matches = lines[i].match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g) || lines[i].split(',');
+        const row = {};
+        headers.forEach((h, idx) => {
+          row[h] = matches[idx] ? matches[idx].replace(/^"|"$/g, '').trim() : '';
+        });
+        rows.push(row);
+      }
+      return rows;
+    }
+
+    // CSV Analyzer
+    function analyzeCSV() {
+      const fileInput = document.getElementById('csvInput');
+      if (!fileInput.files.length) {
+        alert("Please select a CSV file first.");
+        return;
+      }
+
+      const file = fileInput.files[0];
+      const reader = new FileReader();
+
+      reader.onload = function(e) {
+        const fileContent = e.target.result;
+        const rows = parseCSVText(fileContent);
+
+        const readBooks = [];
+        const tbrBooks = [];
+
+        rows.forEach(r => {
+          const status = (r['Read Status'] || r['Exclusive Shelf'] || '').toLowerCase();
+          const title = r['Title'] || '';
+          const author = r['Authors'] || r['Author'] || '';
+
+          if (title) {
+            if (status.includes('read') && !status.includes('to-read')) {
+              readBooks.push({ title, author });
+            } else if (status.includes('to-read') || status.includes('want to read')) {
+              tbrBooks.push({ title, author });
+            }
+          }
+        });
+
+        const allReadTitles = readBooks.map(b => b.title.toLowerCase()).join(' ');
+        
+        let targetGenre = "Dark Academia & Gothic Romance";
+        if (allReadTitles.includes('nocticadia') || allReadTitles.includes('dowry') || allReadTitles.includes('gothikana') || allReadTitles.includes('dark')) {
+          targetGenre = "Dark Academia & Gothic Romance";
+        } else if (allReadTitles.includes('throne') || allReadTitles.includes('court') || allReadTitles.includes('wing')) {
+          targetGenre = "High Fantasy & Romantasy";
+        }
+
+        let selectedTitle = "Gothikana";
+        let selectedAuthor = "RuNyx";
+        
+        const tbrMatch = tbrBooks.find(b => 
+          b.title.toLowerCase().includes('window') || 
+          b.title.toLowerCase().includes('gothikana') || 
+          b.title.toLowerCase().includes('jasmine') ||
+          b.title.toLowerCase().includes('legendborn')
+        );
+
+        if (tbrMatch) {
+          selectedTitle = tbrMatch.title;
+          selectedAuthor = tbrMatch.author;
+        }
+
+        generatedRecommendation = {
+          title: selectedTitle,
+          author: selectedAuthor.startsWith('by') ? selectedAuthor : 'by ' + selectedAuthor,
+          vibe: `${targetGenre} • High Tension • Atmospheric`,
+          reason: `Analyzed from your reading history (${readBooks.length} read books and ${tbrBooks.length} TBR books). Based on your preference for ${targetGenre}, this unread title from your library is your ideal celestial match!`
+        };
+
+        document.getElementById('uploadSection').style.display = 'none';
+        document.getElementById('sealSection').style.display = 'block';
+      };
+
+      reader.readAsText(file);
+    }
+
+    // Reveal Action
+    function unsealCard() {
+      if (!generatedRecommendation) return;
+
+      document.getElementById('cardTitle').innerText = generatedRecommendation.title;
+      document.getElementById('cardAuthor').innerText = generatedRecommendation.author;
+      document.getElementById('cardVibe').innerText = generatedRecommendation.vibe;
+      document.getElementById('cardReason').innerText = generatedRecommendation.reason;
+
+      document.getElementById('sealSection').style.display = 'none';
       document.getElementById('revealCard').classList.add('active');
+
+      confetti({
+        particleCount: 90,
+        spread: 80,
+        origin: { y: 0.6 },
+        colors: ['#d4af37', '#f3e5ab', '#3b1c5a']
+      });
     }
   </script>
 </body>
