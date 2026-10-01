@@ -1,65 +1,475 @@
-<div id="formSection">
-  <div class="step-card">
-    <div class="section-title">1. Library History (Optional)</div>
-    <label for="csvInput">Upload StoryGraph or Goodreads CSV</label>
-    <input type="file" id="csvInput" accept=".csv">
-    <div id="csvStats" style="font-size: 0.85rem; color: #aaa; margin-top: 5px;"></div>
-  </div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Book Oracle — Celestial Reading Matcher</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  
+  <!-- Canvas Confetti Library -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
-  <div class="step-card">
-    <div class="section-title">2. Recommendation Scope</div>
-    <div class="pill-grid" id="scopeGrid">
-      <div class="pill-option active" data-val="surprise" onclick="selectPill('scopeGrid', this)">✨ Surprise Me (Live API)</div>
-      <div class="pill-option" data-val="tbr" onclick="selectPill('scopeGrid', this)">📚 Strictly TBR</div>
-      <div class="pill-option" data-val="wildcard" onclick="selectPill('scopeGrid', this)">🎲 Wildcard</div>
-    </div>
-  </div>
+  <style>
+    :root {
+      --bg-deep: #070913;
+      --gold-primary: #d4af37;
+      --gold-light: #f3e5ab;
+      --gold-dark: #aa7c11;
+      --purple-accent: #3b1c5a;
+      --card-bg: rgba(18, 15, 32, 0.88);
+      --text-main: #ece8f5;
+    }
 
-  <div class="step-card">
-    <div class="section-title">3. Reading Mood & Vibe</div>
-    <label>Primary Desired Mood</label>
-    <div class="pill-grid" id="moodGrid">
-      <div class="pill-option active" data-val="dark academia" onclick="selectPill('moodGrid', this)">Gothic / Dark Academia</div>
-      <div class="pill-option" data-val="cozy fantasy" onclick="selectPill('moodGrid', this)">Cozy / Whimsical</div>
-      <div class="pill-option" data-val="romantasy" onclick="selectPill('moodGrid', this)">High Tension Romantasy</div>
-      <div class="pill-option" data-val="thriller" onclick="selectPill('moodGrid', this)">Fast-Paced Thriller</div>
-      <div class="pill-option" data-val="festive" onclick="selectPill('moodGrid', this)">Autumnal / Festive</div>
-    </div>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-    <label>Select Tropes & Elements</label>
-    <div class="pill-grid" id="tropeGrid">
-      <div class="pill-option active" onclick="toggleMultiPill(this)">Enemies to Lovers</div>
-      <div class="pill-option" onclick="toggleMultiPill(this)">Forbidden Romance</div>
-      <div class="pill-option" onclick="toggleMultiPill(this)">Secret Magic</div>
-      <div class="pill-option" onclick="toggleMultiPill(this)">Found Family</div>
-      <div class="pill-option" onclick="toggleMultiPill(this)">Morally Gray</div>
-      <div class="pill-option" onclick="toggleMultiPill(this)">Plot Twist</div>
-    </div>
-  </div>
+    body {
+      background-color: var(--bg-deep);
+      background-image: radial-gradient(circle at 50% 25%, #1e1133 0%, #070913 85%);
+      color: var(--text-main);
+      font-family: 'Cormorant Garamond', serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
 
-  <div class="step-card">
-    <div class="section-title">4. Reader Preferences</div>
-    <label>Recent 5-Star Favorite Book</label>
-    <input type="text" id="inputFiveStar" placeholder="e.g. Fourth Wing, Nocticadia...">
+    .container {
+      width: 100%;
+      max-width: 620px;
+      text-align: center;
+    }
 
-    <label>Did Not Finish (DNF) or Avoid Theme</label>
-    <input type="text" id="inputDNF" placeholder="e.g. Slow burn, Sci-Fi...">
-  </div>
+    h1 {
+      font-family: 'Cinzel Decorative', cursive;
+      color: var(--gold-light);
+      font-size: 2.3rem;
+      text-shadow: 0 0 15px rgba(212, 175, 55, 0.5);
+      margin-bottom: 8px;
+    }
 
-  <button class="btn-action" onclick="consultOracle()">🔮 Consult the Oracle</button>
-</div>
+    .subtitle {
+      font-family: 'Cinzel', serif;
+      color: #9a8cbe;
+      font-size: 0.95rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 30px;
+    }
 
-<div class="seal-wrapper" id="sealSection">
-  <div class="seal-orb" onclick="unsealCard()">✨</div>
-  <p style="font-family: 'Cinzel'; color: var(--gold-light); font-size: 1.1rem;">The Oracle Has Spoken!</p>
-  <p style="color: #aaa; font-size: 0.9rem; margin-top: 5px;">Click the celestial seal to reveal your match</p>
-</div>
+    .box {
+      background: var(--card-bg);
+      border: 1px solid var(--gold-primary);
+      border-radius: 12px;
+      padding: 30px;
+      box-shadow: 0 0 30px rgba(0,0,0,0.6);
+      backdrop-filter: blur(10px);
+      margin-bottom: 20px;
+    }
 
-<div class="reveal-card" id="revealCard">
-  <div class="api-badge" id="cardSource">Curated Match</div>
-  <img id="cardCover" class="book-cover" src="" alt="Book Cover" style="display:none;">
-  <div class="book-title" id="cardTitle">Title</div>
-  <div class="book-author" id="cardAuthor">by Author</div>
-  <div class="vibe-tag" id="cardVibe">Vibe Tags</div>
-  <div class="reason-box" id="cardReason">Reasoning text...</div>
-</div>
+    .upload-box label.custom-file-upload {
+      display: inline-block;
+      padding: 12px 24px;
+      cursor: pointer;
+      border: 1px dashed var(--gold-primary);
+      border-radius: 8px;
+      color: #bfa8e0;
+      margin: 15px 0;
+      transition: all 0.3s;
+      font-family: 'Cinzel', serif;
+      font-size: 0.95rem;
+    }
+
+    .upload-box label.custom-file-upload:hover {
+      background: rgba(212, 175, 55, 0.1);
+      color: var(--gold-light);
+    }
+
+    input[type="file"] {
+      display: none;
+    }
+
+    .btn {
+      background: linear-gradient(135deg, var(--gold-primary), var(--gold-dark));
+      color: #100b1a;
+      border: none;
+      padding: 12px 28px;
+      font-family: 'Cinzel', serif;
+      font-weight: 700;
+      font-size: 0.95rem;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .btn:hover {
+      box-shadow: 0 0 20px rgba(212, 175, 55, 0.6);
+      transform: translateY(-2px);
+    }
+
+    .seal-section {
+      display: none;
+    }
+
+    .seal-orb {
+      width: 90px;
+      height: 90px;
+      margin: 0 auto 20px auto;
+      background: radial-gradient(circle, #f3e5ab 0%, #aa7c11 70%, #3b1c5a 100%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 30px rgba(212, 175, 55, 0.6);
+      border: 2px solid var(--gold-light);
+      cursor: pointer;
+      font-size: 2.2rem;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .seal-orb:hover {
+      transform: scale(1.08);
+      box-shadow: 0 0 45px rgba(212, 175, 55, 0.9);
+    }
+
+    .stats-badge {
+      display: inline-block;
+      background: rgba(59, 28, 90, 0.5);
+      border: 1px solid var(--gold-dark);
+      padding: 6px 16px;
+      border-radius: 20px;
+      color: var(--gold-light);
+      font-size: 0.9rem;
+      margin-bottom: 20px;
+      font-family: 'Cinzel', serif;
+    }
+
+    .reveal-card {
+      display: none;
+      text-align: center;
+    }
+
+    .reveal-card.active {
+      display: block;
+      animation: fadeIn 0.8s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .reader-greeting {
+      font-family: 'Cinzel', serif;
+      color: var(--gold-primary);
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 12px;
+    }
+
+    .book-title {
+      font-family: 'Cinzel Decorative', cursive;
+      color: var(--gold-light);
+      font-size: 1.8rem;
+      margin-bottom: 6px;
+    }
+
+    .book-author {
+      font-family: 'Cinzel', serif;
+      color: #bfa8e0;
+      font-size: 1.1rem;
+      font-style: italic;
+      margin-bottom: 18px;
+    }
+
+    .vibe-tag {
+      display: inline-block;
+      padding: 6px 18px;
+      background: rgba(59, 28, 90, 0.6);
+      border: 1px solid var(--gold-dark);
+      border-radius: 20px;
+      color: var(--gold-light);
+      font-size: 0.85rem;
+      font-family: 'Cinzel', serif;
+      margin-bottom: 22px;
+    }
+
+    .reason-box {
+      border-top: 1px solid rgba(212, 175, 55, 0.2);
+      padding-top: 18px;
+      font-size: 1.1rem;
+      line-height: 1.6;
+      color: var(--text-main);
+    }
+
+    .file-name {
+      display: block;
+      font-size: 0.9rem;
+      color: var(--gold-light);
+      margin-bottom: 15px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>The Book Oracle</h1>
+    <div class="subtitle">A Celestial Reading Recommendation</div>
+
+    <!-- Step 1: Upload Section -->
+    <div class="box upload-box" id="uploadSection">
+      <h2 style="font-family: 'Cinzel'; color: var(--gold-light); font-size: 1.3rem; margin-bottom: 10px;">Consult the Celestial Library</h2>
+      <p style="font-size: 0.95rem; color: #a49bbb; margin-bottom: 15px;">
+        Upload your StoryGraph or Goodreads CSV export file to unseal your personalized match.
+      </p>
+      
+      <label for="csvInput" class="custom-file-upload">
+        📁 Select CSV Export File
+      </label>
+      <input type="file" id="csvInput" accept=".csv" onchange="showFileName()">
+      <span class="file-name" id="fileNameDisplay"></span>
+      
+      <br>
+      <button class="btn" onclick="analyzeCSV()">🔮 Consult the Oracle</button>
+    </div>
+
+    <!-- Step 2: Unseal Section -->
+    <div class="box seal-section" id="sealSection">
+      <div id="statsBadge" class="stats-badge">Analyzing library...</div>
+      <div class="seal-orb" onclick="unsealCard()">✨</div>
+      <p style="font-family: 'Cinzel'; color: var(--gold-light); font-size: 1.2rem;">The Oracle Has Spoken!</p>
+      <p style="color: #a49bbb; font-size: 0.95rem; margin-top: 5px;">Click the celestial seal to reveal your match</p>
+    </div>
+
+    <!-- Step 3: Reveal Card -->
+    <div class="box reveal-card" id="revealCard">
+      <div class="reader-greeting">Curated for Your Library</div>
+      <div class="book-title" id="cardTitle">Title Placeholder</div>
+      <div class="book-author" id="cardAuthor">by Author</div>
+      <div class="vibe-tag" id="cardVibe">Vibe Tags</div>
+      <div class="reason-box" id="cardReason">Reason placeholder...</div>
+    </div>
+  </div>
+
+  <script>
+    let generatedRecommendation = null;
+
+    function showFileName() {
+      const input = document.getElementById('csvInput');
+      const nameDisplay = document.getElementById('fileNameDisplay');
+      if (input.files.length > 0) {
+        nameDisplay.innerText = "Loaded: " + input.files[0].name;
+      }
+    }
+
+    /**
+     * Robust CSV Line Parser
+     * Handles commas inside quotes, escaped quotes, and multiline values.
+     */
+    function parseCSV(text) {
+      const rows = [];
+      let currentRow = [];
+      let currentToken = '';
+      let insideQuotes = false;
+
+      for (let i = 0; i < text.length; i++) {
+        const char = text[i];
+        const nextChar = text[i + 1];
+
+        if (char === '"') {
+          if (insideQuotes && nextChar === '"') {
+            currentToken += '"';
+            i++; // skip escaped quote
+          } else {
+            insideQuotes = !insideQuotes;
+          }
+        } else if (char === ',' && !insideQuotes) {
+          currentRow.push(currentToken.trim());
+          currentToken = '';
+        } else if ((char === '\r' || char === '\n') && !insideQuotes) {
+          if (char === '\r' && nextChar === '\n') {
+            i++; // skip \n in \r\n
+          }
+          currentRow.push(currentToken.trim());
+          if (currentRow.some(cell => cell.length > 0)) {
+            rows.push(currentRow);
+          }
+          currentRow = [];
+          currentToken = '';
+        } else {
+          currentToken += char;
+        }
+      }
+
+      if (currentToken.length > 0 || currentRow.length > 0) {
+        currentRow.push(currentToken.trim());
+        rows.push(currentRow);
+      }
+
+      if (rows.length < 2) return [];
+
+      // Convert header array to lowercase for flexible matching
+      const headers = rows[0].map(h => h.toLowerCase().replace(/^"|"$/g, ''));
+      const parsedData = [];
+
+      for (let i = 1; i < rows.length; i++) {
+        const row = rows[i];
+        if (row.length === 0) continue;
+        
+        const rowObj = {};
+        headers.forEach((header, index) => {
+          rowObj[header] = row[index] ? row[index].replace(/^"|"$/g, '') : '';
+        });
+        parsedData.push(rowObj);
+      }
+
+      return parsedData;
+    }
+
+    /**
+     * Extracts values from rows using multiple candidate column names
+     */
+    function getFieldValue(row, candidateKeys) {
+      for (const key of candidateKeys) {
+        if (row[key] !== undefined && row[key] !== '') {
+          return row[key];
+        }
+      }
+      return '';
+    }
+
+    // Main Analysis Engine
+    function analyzeCSV() {
+      const fileInput = document.getElementById('csvInput');
+      if (!fileInput.files.length) {
+        alert("Please select a CSV file first.");
+        return;
+      }
+
+      const file = fileInput.files[0];
+      const reader = new FileReader();
+
+      reader.onload = function(e) {
+        const fileContent = e.target.result;
+        const rows = parseCSV(fileContent);
+
+        if (rows.length === 0) {
+          alert("Could not parse data from this CSV file. Please verify it is a standard StoryGraph or Goodreads export.");
+          return;
+        }
+
+        const readBooks = [];
+        const tbrBooks = [];
+
+        // Flexible key matching lists
+        const titleKeys = ['title'];
+        const authorKeys = ['authors', 'author', 'author/illustrator'];
+        const statusKeys = ['read status', 'exclusive shelf', 'bookshelves', 'status', 'shelf', 'shelves'];
+
+        rows.forEach(r => {
+          const title = getFieldValue(r, titleKeys);
+          const author = getFieldValue(r, authorKeys);
+          const rawStatus = getFieldValue(r, statusKeys).toLowerCase();
+
+          if (title) {
+            // Flexible shelf matching
+            const isRead = rawStatus.includes('read') && !rawStatus.includes('to-read') && !rawStatus.includes('want to read');
+            const isTBR = rawStatus.includes('to-read') || rawStatus.includes('want to read') || rawStatus.includes('read-next') || rawStatus.includes('tbr');
+
+            if (isRead) {
+              readBooks.push({ title, author });
+            } else if (isTBR) {
+              tbrBooks.push({ title, author });
+            } else if (!rawStatus) {
+              // Default fallback for unassigned shelf rows
+              tbrBooks.push({ title, author });
+            }
+          }
+        });
+
+        const totalReadCount = readBooks.length;
+        const totalTBRCount = tbrBooks.length;
+
+        // Pattern matching on user's reading history
+        const allReadTitles = readBooks.map(b => b.title.toLowerCase()).join(' ');
+        
+        let targetGenre = "Dark Academia & Gothic Fantasy";
+        if (allReadTitles.includes('nocticadia') || allReadTitles.includes('dowry') || allReadTitles.includes('gothikana') || allReadTitles.includes('dark')) {
+          targetGenre = "Dark Academia & Gothic Romance";
+        } else if (allReadTitles.includes('throne') || allReadTitles.includes('court') || allReadTitles.includes('wing') || allReadTitles.includes('fourth')) {
+          targetGenre = "High Fantasy & Romantasy";
+        } else if (allReadTitles.includes('beach') || allReadTitles.includes('love') || allReadTitles.includes('paper')) {
+          targetGenre = "Contemporary Romance & High Emotion";
+        }
+
+        // Pick matching unread book from TBR or default fallback
+        let selectedTitle = "Gothikana";
+        let selectedAuthor = "RuNyx";
+
+        if (tbrBooks.length > 0) {
+          // Look for curated matches inside their own TBR list first
+          const matchingTBR = tbrBooks.find(b => {
+            const t = b.title.toLowerCase();
+            return t.includes('gothikana') || t.includes('window') || t.includes('jasmine') || t.includes('legendborn') || t.includes('serpent') || t.includes('belladonna');
+          });
+
+          if (matchingTBR) {
+            selectedTitle = matchingTBR.title;
+            selectedAuthor = matchingTBR.author;
+          } else {
+            // Otherwise select an intriguing title from their unread list
+            const randomPick = tbrBooks[Math.floor(Math.random() * tbrBooks.length)];
+            selectedTitle = randomPick.title;
+            selectedAuthor = randomPick.author;
+          }
+        }
+
+        const authorFormatted = selectedAuthor.toLowerCase().startsWith('by') ? selectedAuthor : 'by ' + selectedAuthor;
+
+        generatedRecommendation = {
+          title: selectedTitle,
+          author: authorFormatted,
+          vibe: `${targetGenre} • High Tension • Atmospheric`,
+          reason: `Analyzed from your reading history (${totalReadCount} read books & ${totalTBRCount} TBR wishlist books). Based on your preference for ${targetGenre}, this unread title from your library is your ideal celestial match!`
+        };
+
+        // Update UI step 2
+        document.getElementById('statsBadge').innerText = `✨ Found ${totalReadCount} Read Books & ${totalTBRCount} TBR Books`;
+        document.getElementById('uploadSection').style.display = 'none';
+        document.getElementById('sealSection').style.display = 'block';
+      };
+
+      reader.readAsText(file);
+    }
+
+    function unsealCard() {
+      if (!generatedRecommendation) return;
+
+      document.getElementById('cardTitle').innerText = generatedRecommendation.title;
+      document.getElementById('cardAuthor').innerText = generatedRecommendation.author;
+      document.getElementById('cardVibe').innerText = generatedRecommendation.vibe;
+      document.getElementById('cardReason').innerText = generatedRecommendation.reason;
+
+      document.getElementById('sealSection').style.display = 'none';
+      document.getElementById('revealCard').classList.add('active');
+
+      confetti({
+        particleCount: 100,
+        spread: 80,
+        origin: { y: 0.6 },
+        colors: ['#d4af37', '#f3e5ab', '#3b1c5a']
+      });
+    }
+  </script>
+</body>
+</html>
